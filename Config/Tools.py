@@ -267,7 +267,7 @@ def ListIsNone(List):
 
 
 def RandomString(Len=14):
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=Len))
+    return ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=Len))
 
 
 def Get_IP(request):

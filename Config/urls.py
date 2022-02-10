@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path , include
+from pip._vendor.html5lib.treeadapters.sax import namespace
 
 urlpatterns = [
-    path('', include('Public.urls')),
-    path('p', include('Product.urls')),
+    path('', include('Public.urls',namespace='public')),
+    path('p/', include('Product.urls',namespace='product')),
     path('admin/', admin.site.urls),
 ]
