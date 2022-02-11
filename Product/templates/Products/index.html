@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/assets/css/plugins/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="/assets/css/plugins/magnific-popup/magnific-popup.css">
     <link rel="stylesheet" href="/assets/css/plugins/nouislider/nouislider.css">
-    
+
     <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
 {% endblock %}
 
@@ -26,14 +26,14 @@
         <main class="main">
             <div class="page-header text-center" style="background-image: url('/assets/images/backgrounds/bg-1.jpg')">
                 <div class="container-fluid">
-{#                    <h1 class="page-title">Fullwidth No Sidebar<span>Shop</span></h1>#}
+                    {#                    <h1 class="page-title">Fullwidth No Sidebar<span>Shop</span></h1>#}
                 </div><!-- End .container-fluid -->
             </div><!-- End .page-header -->
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
                 <div class="container-fluid">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Products</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'product:products' %}">Products</a></li>
                     </ol>
                 </div><!-- End .container-fluid -->
             </nav><!-- End .breadcrumb-nav -->
@@ -67,7 +67,9 @@
 
                     <div class="products">
                         <div class="row">
-                            {% include 'Products/CardProduct.html' with Product=Product %}
+                            {% for product in products %}
+                                {% include 'Products/CardProduct.html' with product=product %}
+                            {% endfor %}
                         </div><!-- End .row -->
 
                         <div class="load-more-container text-center">
