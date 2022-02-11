@@ -1,14 +1,15 @@
 from django.contrib import admin
-from .models import Product , Category , Image
+from .models import Product , Category , Image , Color
 # Register your models here.
 
 @admin.register(Product)
 class ProductAdminCustomize(admin.ModelAdmin):
-    list_display = ['title','price','datecreate','status']
-    list_filter = ['user','datecreate','status']
+    list_display = ['title','price','datecreate','status_show','status_available']
+    list_filter = ['user','datecreate','status_show','status_available']
     search_fields = ['title',]
     ordering = ['-dateupdate']
-    list_editable = ['status',]
+    list_editable = ['status_show','status_available']
 
 admin.site.register(Category)
 admin.site.register(Image)
+admin.site.register(Color)
