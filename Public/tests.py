@@ -1,5 +1,5 @@
 from django.test import TestCase , SimpleTestCase
-from django.contrib.auth.models import User
+from User.models import User
 
 class TestExample(TestCase):
     def test_view_home(self):
