@@ -164,19 +164,23 @@ $(document).ready(function () {
     // Slider For category pages / filter price
     if ( typeof noUiSlider === 'object' ) {
 		var priceSlider  = document.getElementById('price-slider');
+		let maxPrice = parseInt(priceSlider.getAttribute('maxPrice')) || 1
+        let rangePrice = priceSlider.getAttribute('rangePrice') || '0-1'
+        let startPrice = rangePrice.split('-')[0]
+        let endPrice = rangePrice.split('-')[1]
 
 		// Check if #price-slider elem is exists if not return
 		// to prevent error logs
 		if (priceSlider == null) return;
 
 		noUiSlider.create(priceSlider, {
-			start: [ 0, 750 ],
+			start: [ startPrice , endPrice ],
 			connect: true,
-			step: 50,
+			step: 5,
 			margin: 200,
 			range: {
 				'min': 0,
-				'max': 1000
+				'max': maxPrice
 			},
 			tooltips: true,
 			format: wNumb({
@@ -188,6 +192,7 @@ $(document).ready(function () {
 		// Update Price Range
 		priceSlider.noUiSlider.on('update', function( values, handle ){
 			$('#filter-price-range').text(values.join(' - '));
+            window._rangePriceFilter = `${values[0].replace('$','')}-${values[1].replace('$','')}`
 		});
 	}
 
