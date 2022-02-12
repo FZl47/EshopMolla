@@ -37,9 +37,14 @@
             <div class="d-flex justify-content-between">
                 <div class="product-nav product-nav-dots">
                     {% for color in product.colors.all %}
+                        {% if forloop.counter < 6 %}
                             <span title="{{ color.name }}" style="background: {{ color.color }};"><span
-                            class="sr-only">{{ color.name }}</span></span>
+                                    class="sr-only">{{ color.name }}</span></span>
+                        {% endif %}
                     {% endfor %}
+                    {% if product.colors.count > 5 %}
+                        <p><b>+</b></p>
+                    {% endif %}
                 </div><!-- End .product-nav -->
                 <div class="product-cat">
                     {% for category in product.categories.all %}

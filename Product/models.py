@@ -18,7 +18,21 @@ class Category(models.Model):
         return self.title.replace(' ', '-')
 
     def get_absolute_url(self):
-        return f"{resolve_url('product:products')}?cat={self.getTitle}-{self.id}"
+        return f"{self.getTitle}-{self.id}"
+
+    def __str__(self):
+        return self.title
+
+class Brand(models.Model):
+    title = models.CharField(max_length=40)
+
+    @property
+    def getTitle(self):
+        return self.title.replace(' ','-')
+
+    def get_absolute_url(self):
+        return f"{self.getTitle}-{self.id}"
+
 
     def __str__(self):
         return self.title
@@ -50,6 +64,7 @@ class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product')
     images = models.ManyToManyField(to='Product.Image', related_name='product')
     categories = models.ManyToManyField(Category, related_name='product')
+    brand = models.ForeignKey(Brand,on_delete=models.SET_NULL,null=True)
     colors = models.ManyToManyField('Product.Color', related_name='product')
 
     objects = models.Manager()
@@ -118,3 +133,7 @@ class Color(models.Model):
     @property
     def getName(self):
         return self.name.replace(' ', '-')
+
+    @property
+    def get_absolute_url(self):
+        return f"{self.getName}-{self.id}"

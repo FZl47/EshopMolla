@@ -1,0 +1,169 @@
+<aside class="sidebar-shop sidebar-filter" style="z-index: 3000;">
+    <div class="sidebar-filter-wrapper" style="min-height: 100%">
+        <div class="widget widget-clean">
+            <label><i class="icon-close"></i>Filters</label>
+            <a href="#" class="sidebar-filter-clear">Clean All</a>
+        </div><!-- End .widget -->
+        <div class="widget widget-collapsible">
+            <h3 class="widget-title">
+                <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true"
+                   aria-controls="widget-1">
+                    Category
+                </a>
+            </h3><!-- End .widget-title -->
+
+            <div class="collapse show" id="widget-1">
+                <div class="widget-body">
+                    <div class="filter-items filter-items-count" id="filter-items-category">
+                        {% for category in categories %}
+                            <div class="filter-item">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" url-filter="{{ category.get_absolute_url }}" {% if category.filterCategorySelected %}
+                                           checked="checked" selected="true" {% endif %}
+                                           class="custom-control-input"
+                                           id="cat-{{ forloop.counter }}">
+                                    <label class="custom-control-label"
+                                           for="cat-{{ forloop.counter }}">{{ category.title }}</label>
+                                </div><!-- End .custom-checkbox -->
+                                <span class="item-count">{{ category.product.count }}</span>
+                            </div><!-- End .filter-item -->
+                        {% endfor %}
+                    </div><!-- End .filter-items -->
+                </div><!-- End .widget-body -->
+            </div><!-- End .collapse -->
+        </div><!-- End .widget -->
+
+        <div class="widget widget-collapsible d-none">
+            <h3 class="widget-title">
+                <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true"
+                   aria-controls="widget-2">
+                    Size
+                </a>
+            </h3><!-- End .widget-title -->
+
+            <div class="collapse show" id="widget-2">
+                <div class="widget-body">
+                    <div class="filter-items">
+                        <div class="filter-item">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="size-1">
+                                <label class="custom-control-label" for="size-1">XS</label>
+                            </div><!-- End .custom-checkbox -->
+                        </div><!-- End .filter-item -->
+
+                        <div class="filter-item">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="size-2">
+                                <label class="custom-control-label" for="size-2">S</label>
+                            </div><!-- End .custom-checkbox -->
+                        </div><!-- End .filter-item -->
+
+                        <div class="filter-item">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" checked
+                                       id="size-3">
+                                <label class="custom-control-label" for="size-3">M</label>
+                            </div><!-- End .custom-checkbox -->
+                        </div><!-- End .filter-item -->
+
+                        <div class="filter-item">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" checked
+                                       id="size-4">
+                                <label class="custom-control-label" for="size-4">L</label>
+                            </div><!-- End .custom-checkbox -->
+                        </div><!-- End .filter-item -->
+
+                        <div class="filter-item">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="size-5">
+                                <label class="custom-control-label" for="size-5">XL</label>
+                            </div><!-- End .custom-checkbox -->
+                        </div><!-- End .filter-item -->
+
+                        <div class="filter-item">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="size-6">
+                                <label class="custom-control-label" for="size-6">XXL</label>
+                            </div><!-- End .custom-checkbox -->
+                        </div><!-- End .filter-item -->
+                    </div><!-- End .filter-items -->
+                </div><!-- End .widget-body -->
+            </div><!-- End .collapse -->
+        </div><!-- End .widget -->
+
+        <div class="widget widget-collapsible">
+            <h3 class="widget-title">
+                <a data-toggle="collapse" href="#widget-3" role="button" aria-expanded="true"
+                   aria-controls="widget-3">
+                    Color
+                </a>
+            </h3><!-- End .widget-title -->
+
+            <div class="collapse show" id="widget-3">
+                <div class="widget-body">
+                    <div class="filter-colors" id="filter-items-color">
+                        {% for color in colors %}
+                            <button url-filter="{{ color.get_absolute_url }}" {% if color.filterColorSelected %}selected="true" checked="checked"{% else %}selected="false"{% endif %}
+                                    color-input-filter
+                                    style="background: {{ color.color }};"><span
+                                    class="sr-only">{{ color.name }}</span></button>
+                        {% endfor %}
+                    </div><!-- End .filter-colors -->
+                </div><!-- End .widget-body -->
+            </div><!-- End .collapse -->
+        </div><!-- End .widget -->
+
+        <div class="widget widget-collapsible">
+            <h3 class="widget-title">
+                <a data-toggle="collapse" href="#widget-4" role="button" aria-expanded="true"
+                   aria-controls="widget-4">
+                    Brand
+                </a>
+            </h3><!-- End .widget-title -->
+            <div class="collapse show" id="widget-4">
+                <div class="widget-body">
+                    <div class="filter-items" id="filter-items-brand">
+                        {% for brand in brands %}
+                            <div class="filter-item">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" url-filter="{{ brand.get_absolute_url }}" {% if brand.filterBrandSelected %}
+                                           checked="checked" selected="true" {% endif %}
+                                           class="custom-control-input"
+                                           id="brand-{{ forloop.counter }}">
+                                    <label class="custom-control-label"
+                                           for="brand-{{ forloop.counter }}">{{ brand.title }}</label>
+                                </div><!-- End .custom-checkbox -->
+                            </div><!-- End .filter-item -->
+                        {% endfor %}
+                    </div><!-- End .filter-items -->
+                </div><!-- End .widget-body -->
+            </div><!-- End .collapse -->
+        </div><!-- End .widget -->
+
+        <div class="widget widget-collapsible">
+            <h3 class="widget-title">
+                <a data-toggle="collapse" href="#widget-5" role="button" aria-expanded="true"
+                   aria-controls="widget-5">
+                    Price
+                </a>
+            </h3><!-- End .widget-title -->
+
+            <div class="collapse show" id="widget-5">
+                <div class="widget-body">
+                    <div class="filter-price">
+                        <div class="filter-price-text">
+                            Price Range:
+                            <span id="filter-price-range"></span>
+                        </div><!-- End .filter-price-text -->
+                        <div id="price-slider" maxPrice="{{ highsetPriceProduct }}"
+                             rangePrice="{{ rangePriceFilter }}"></div><!-- End #price-slider -->
+                    </div><!-- End .filter-price -->
+                </div><!-- End .widget-body -->
+            </div><!-- End .collapse -->
+        </div><!-- End .widget -->
+    </div><!-- End .sidebar-filter-wrapper -->
+    <div class="position-sticky w-100 text-center" style="bottom: 0;left: 0;z-index: 2">
+       <button class="btn w-100 h-100 p-4" id="applyFilters" style="background: #c96;color: #fff">Apply filters</button>
+    </div>
+</aside><!-- End .sidebar-filter -->
