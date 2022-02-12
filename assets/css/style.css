@@ -11691,7 +11691,7 @@ button:focus {
     padding-bottom: .5rem
 }
 
-.filter-colors a {
+.filter-colors button {
     position: relative;
     display: block;
     width: 2.4rem;
@@ -11702,8 +11702,8 @@ button:focus {
     transition: box-shadow .35s ease
 }
 
-.filter-colors a:after {
-    color: #fff;
+.filter-colors button:after {
+    color: #ffffff;
     font-family: 'molla';
     content: '\ec2d';
     font-size: 1rem;
@@ -11718,14 +11718,16 @@ button:focus {
     margin-left: -.5rem
 }
 
-.filter-colors a.selected, .filter-colors a:hover, .filter-colors a:focus {
+.filter-colors button.selected, .filter-colors a:hover, .filter-colors a:focus {
     box-shadow: 0 0 0 .1rem #cccccc
 }
 
-.filter-colors a.selected:after {
+.filter-colors button[selected='true']:after {
     visibility: visible;
     opacity: 1
 }
+
+
 
 .filter-price {
     padding-top: .2rem;
