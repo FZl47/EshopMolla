@@ -43,12 +43,23 @@
                 <div class="container-fluid">
                     <div class="toolbox">
                         <div class="toolbox-left">
-                            <a href="#" class="sidebar-toggler"><i class="icon-bars"></i>Filters</a>
+                            {% if filterIsActive == 'true' %}
+                                <a href="#" class="sidebar-toggler btn-hover"><b><i
+                                        class="icon-bars"></i>Filters</b></a>
+                            {% else %}
+                                <a href="#" class="sidebar-toggler"><i class="icon-bars"></i>Filters</a>
+                            {% endif %}
                         </div><!-- End .toolbox-left -->
 
                         <div class="toolbox-center">
                             <div class="toolbox-info">
-                                Showing <span>12 of 56</span> Products
+                                {% if pagination.step == countProducts %}
+                                    Showing <span>{{ showingProducts }} of {{ countAllProduct }}</span> Products
+                                {% else %}
+                                    {% if countProducts != 0 %}
+                                        Showing <span>{{ countAllProduct }} of {{ countAllProduct }}</span> Products
+                                    {% endif %}
+                                {% endif %}
                             </div><!-- End .toolbox-info -->
                         </div><!-- End .toolbox-center -->
 
@@ -64,8 +75,21 @@
                                 </div>
                             </div><!-- End .toolbox-sort -->
                         </div><!-- End .toolbox-right -->
+                        <br>
                     </div><!-- End .toolbox -->
-
+                    {% if searchIsActive %}
+                        <div class="text-right mb-4">
+                            <div dir="rtl">
+                                <a href="{% url 'product:products' %}">clear search</a>
+                                &nbsp;
+                                <span class="text-light">|</span>
+                                &nbsp;
+                                <span class="text-info">{{ searchContent }}</span>
+                                :
+                                <span class="text-light"> search  </span>
+                            </div>
+                        </div>
+                    {% endif %}
                     <div class="products">
                         <div class="row">
                             {% for product in products %}
@@ -73,13 +97,12 @@
                             {% endfor %}
                         </div><!-- End .row -->
 
-                        {% include 'Products/pageNavigation.html' %}
                         {#                        <div class="load-more-container text-center">#}
                         {#                            <a href="#" class="btn btn-outline-darker btn-load-more">More Products <i#}
                         {#                                    class="icon-refresh"></i></a>#}
                         {#                        </div><!-- End .load-more-container -->#}
                     </div><!-- End .products -->
-
+                    {% include 'Products/pageNavigation.html' %}
                     <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->
                     {% include 'Products/filterSection.html' %}
                 </div><!-- End .container-fluid -->
@@ -413,13 +436,18 @@
     <script src="/assets/js/main.js"></script>
 
 
+    <script>
+        window._pageNum = '{{ request.GET.page }}' || 1
+        try {
+            window._pageNum = parseInt(window._pageNum)
+        } catch (e) {
+            window._pageNum = 1
+        }
+    </script>
     <script>// script for filter section
     let categoriesSelected = []
     let colorsSelected = []
     let brandsSelected = []
-    </script>
-    <script>// script for filter section
-
     let inputColorFilter = document.querySelectorAll('[color-input-filter]')
     for (let inp of inputColorFilter) {
         inp.onclick = function (e) {
@@ -462,14 +490,82 @@
                 brandsSelected.push(urlFilter)
             }
         }
-        categoriesSelected = JSON.stringify(categoriesSelected)
-        brandsSelected = JSON.stringify(brandsSelected)
-        colorsSelected = JSON.stringify(colorsSelected)
-        window.location.href = `/p/products?filter=true&cats=${categoriesSelected}&brands=${brandsSelected}&colors=${colorsSelected}&range=${window._rangePriceFilter}`
+
+
+        let url = new URLSearchParams(window.location.search);
+        url.set('page', '1')
+        url.set('filter', 'true')
+        url.set('cats', categoriesSelected.join('_'))
+        url.set('brands', brandsSelected.join('_'))
+        url.set('colors', colorsSelected.join('_'))
+        url.set('range', window._rangePriceFilter)
+        window.location.search = url;
+
 
     })
 
+    function insertParam(key, value, refresh = true) {
+        key = encodeURIComponent(key);
+        value = encodeURIComponent(value);
+        var kvp = document.location.search.substr(1).split('&');
+        let i = 0;
+        for (; i < kvp.length; i++) {
+            if (kvp[i].startsWith(key + '=')) {
+                let pair = kvp[i].split('=');
+                pair[1] = value;
+                kvp[i] = pair.join('=');
+                break;
+            }
+        }
+        if (i >= kvp.length) {
+            kvp[kvp.length] = [key, value].join('=');
+        }
+        let params = kvp.join('&');
+        document.location.search = params;
+    }
 
+    function removeParam(key, sourceURL) {
+        var rtn = sourceURL.split("?")[0],
+            param,
+            params_arr = [],
+            queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+        if (queryString !== "") {
+            params_arr = queryString.split("&");
+            for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+                param = params_arr[i].split("=")[0];
+                if (param === key) {
+                    params_arr.splice(i, 1);
+                }
+            }
+            if (params_arr.length) rtn = rtn + "?" + params_arr.join("&");
+        }
+        return rtn;
+    }
+
+    // Pagination
+
+    let btnsPage = document.querySelectorAll('[btn-page-pagination]')
+    for (let btn of btnsPage) {
+        btn.addEventListener('click', function () {
+            console.log(this)
+            let pageNum = this.getAttribute('pageNum')
+            insertParam('page', pageNum)
+        })
+    }
+
+    let btnNextPage = document.querySelector('[btn-next-page-pagination]')
+    let btnPreVioustPage = document.querySelector('[btn-previous-page-pagination]')
+
+    if (btnNextPage) {
+        btnNextPage.addEventListener('click', function () {
+            insertParam('page', window._pageNum + 1)
+        })
+    }
+    if (btnPreVioustPage) {
+        btnPreVioustPage.addEventListener('click', function () {
+            insertParam('page', window._pageNum - 1)
+        })
+    }
     </script>
 {% endblock %}
 

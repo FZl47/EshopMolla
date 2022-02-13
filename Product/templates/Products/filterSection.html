@@ -104,7 +104,7 @@
                 <div class="widget-body">
                     <div class="filter-colors" id="filter-items-color">
                         {% for color in colors %}
-                            <button url-filter="{{ color.get_absolute_url }}" {% if color.filterColorSelected %}selected="true" checked="checked"{% else %}selected="false"{% endif %}
+                            <button title="{{ color.name }}" url-filter="{{ color.get_absolute_url }}" {% if color.filterColorSelected %}selected="true" checked="checked"{% else %}selected="false"{% endif %}
                                     color-input-filter
                                     style="background: {{ color.color }};"><span
                                     class="sr-only">{{ color.name }}</span></button>

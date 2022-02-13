@@ -1,18 +1,66 @@
 <nav aria-label="Page navigation">
+    <h1>{{ listRange }}</h1>
     <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-            <a class="page-link page-link-prev" href="#" aria-label="Previous" tabindex="-1" aria-disabled="true">
-                <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
-            </a>
-        </li>
-        <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item-total">of 6</li>
-        <li class="page-item">
-            <a class="page-link page-link-next" href="#" aria-label="Next">
-                Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
-            </a>
-        </li>
+        {% if pageActive.has_previous %}
+            <li class="page-item">
+                <button class="page-link page-link-prev" btn-previous-page-pagination aria-label="Previous"
+                        tabindex="-1" aria-disabled="true">
+                    <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
+                </button>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <button class="page-link page-link-prev" aria-label="Previous" tabindex="-1" aria-disabled="true">
+                    <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
+                </button>
+            </li>
+        {% endif %}
+        {% if pagination.currentPage == 1 %}
+            <li class="page-item active" aria-current="page">
+                <button class="page-link" btn-page-pagination pageNum="1">1</button>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <button class="page-link" btn-page-pagination pageNum="1">1</button>
+            </li>
+        {% endif %}
+        {% for pageNum in pagination.listRange %}
+            {% if pageNum == pagination.currentPage %}
+                <li class="page-item active" aria-current="page">
+                    <button class="page-link" btn-page-pagination pageNum="{{ pageNum }}">{{ pageNum }}</button>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <button class="page-link" btn-page-pagination pageNum="{{ pageNum }}">{{ pageNum }}</button>
+                </li>
+            {% endif %}
+        {% endfor %}
+        {% if pagination.countPages > 1 %}
+            {% if pagination.currentPage == pagination.lastPage %}
+                <li class="page-item active" aria-current="page">
+                    <button class="page-link" btn-page-pagination
+                            pageNum="{{ pagination.lastPage }}">{{ pagination.lastPage }}</button>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <button class="page-link" btn-page-pagination
+                            pageNum="{{ pagination.lastPage }}">{{ pagination.lastPage }}</button>
+                </li>
+            {% endif %}
+        {% endif %}
+        <li class="page-item-total">of {{ pagination.num_pages }}</li>
+        {% if pageActive.has_next %}
+            <li class="page-item">
+                <button class="page-link page-link-next" btn-next-page-pagination aria-label="Next">
+                    Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+                </button>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <button class="page-link page-link-next" aria-label="Next">
+                    Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+                </button>
+            </li>
+        {% endif %}
     </ul>
 </nav>

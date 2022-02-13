@@ -1,5 +1,5 @@
 <div class="col-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2">
-    <div class="product">
+    <div class="product" style="border: 1px solid #F3F3F3">
         <figure class="product-media">
             {% if product.isNew %}
                 <span class="product-label label-new">New</span>
@@ -21,7 +21,7 @@
                 {#                   title="Compare"><span>compare</span></a>#}
             </div><!-- End .product-action -->
         </figure><!-- End .product-media -->
-        <div class="product-body">
+        <div class="product-body p-2">
             <h3 class="product-title"><a href="#">{{ product.title }}</a></h3>
             <!-- End .product-title -->
             <div class="product-price">
