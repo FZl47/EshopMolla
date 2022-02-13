@@ -59,7 +59,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     datecreate = models.DateTimeField(auto_now_add=True)
     dateupdate = models.DateTimeField(auto_now=True)
-    status_show = models.CharField(max_length=10, choices=STATUS_SHOW, default='deactive')
+    status_show = models.CharField(max_length=10, choices=STATUS_SHOW, default='active')
     status_available = models.CharField(max_length=20, choices=STATUS_AVAILABLE, default='available')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product')
     images = models.ManyToManyField(to='Product.Image', related_name='product')
