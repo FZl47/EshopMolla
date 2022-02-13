@@ -19059,4 +19059,13 @@ button:focus {
     content: '\f7e3'
 }
 
+
+.btn-hover{
+    color: #c96!important;
+}
+
+.btn-hover *{
+    color: inherit!important;
+}
+
 /*# sourceMappingURL=style.css.map */
