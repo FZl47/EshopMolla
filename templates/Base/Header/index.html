@@ -1,4 +1,4 @@
-<header class="header header-9">
+<header class="header header-9 pb-4" {% if place != 'Home' %}style="background-image: url('/assets/images/backgrounds/bg-1.jpg')"{% endif %}>
     <div class="header-middle sticky-header">
         <div class="container">
             <div class="header-left">
@@ -67,7 +67,7 @@
 
                 <div class="header-search">
                     <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                    <form action="#" method="get">
+                    <form action="{% url 'product:products' %}" method="get">
                         <div class="header-search-wrapper">
                             <label for="q" class="sr-only">Search</label>
                             <input type="search" class="form-control" name="search" id="input-search" placeholder="Search in..."
