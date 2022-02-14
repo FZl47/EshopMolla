@@ -4,7 +4,10 @@ from User.models import User
 from Config.Tools import RandomString
 from django.shortcuts import resolve_url
 from django.utils import timezone
+from django.core.validators import MinValueValidator
 import datetime
+
+
 
 
 # Create your models here.
@@ -38,9 +41,20 @@ class Brand(models.Model):
         return self.title
 
 
+def orderByPopulariy(products):
+    products_sorted = sorted(sorted(products,key=lambda i: i.getRating()),key=lambda j: j.productIsStock)[::-1]
+    return products_sorted
+
+def orderByDate(products):
+    return sorted(products.order_by('-datecreate'),key=lambda i: i.productIsStock)[::-1]
+
+def orderByPrice(products):
+    return sorted(products.order_by('price'),key=lambda i: i.productIsStock)[::-1]
+
 class ProductManagerCustomize(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status_show='active')
+        products = super().get_queryset().filter(status_show='active')
+        return products
 
 
 class Product(models.Model):
@@ -65,7 +79,7 @@ class Product(models.Model):
     images = models.ManyToManyField(to='Product.Image', related_name='product')
     categories = models.ManyToManyField(Category, related_name='product')
     brand = models.ForeignKey(Brand,on_delete=models.SET_NULL,null=True)
-    colors = models.ManyToManyField('Product.Color', related_name='product')
+
 
     objects = models.Manager()
     getProducts = ProductManagerCustomize()
@@ -95,11 +109,26 @@ class Product(models.Model):
         _day = 4
         return True if (self.datecreate + datetime.timedelta(days=_day)) > timezone.now() else False
 
+    @property
+    def productIsStock(self):
+        # Get all color seted for product if no color => out of stock
+        stocks = self.productStock.all()
+        for s in stocks:
+            if s.productIsStock():
+                return True
+        return False
+
     def getRating(self):
         _rating = 2
         #  5 * 20 => 100%
         #  3 * 20 => 60%
-        return _rating * 20   # برای گرفتن ریتینگ به صورت درصد
+        return _rating * 20   # for get rating by Percentage
+
+
+    def getColors(self):
+        colors = Color.objects.filter(productStock__product__id=self.id).distinct()
+        return colors
+
 
     def __str__(self):
         return self.title
@@ -137,3 +166,23 @@ class Color(models.Model):
     @property
     def get_absolute_url(self):
         return f"{self.getName}-{self.id}"
+
+
+class Size(models.Model):
+    name = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.name
+
+
+class ProductStock(models.Model):
+    product = models.ForeignKey('Product.Product',on_delete=models.CASCADE,related_name='productStock')
+    count = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+    color = models.ForeignKey('Product.Color',on_delete=models.CASCADE,related_name='productStock')
+    size = models.ForeignKey('Product.Size',on_delete=models.CASCADE)
+
+    def productIsStock(self):
+        return self.count > 0
+
+    def __str__(self):
+        return f'{self.product.title}-{self.color.name}-{self.count}'

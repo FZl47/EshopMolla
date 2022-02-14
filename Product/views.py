@@ -2,7 +2,7 @@ from django.shortcuts import render , Http404
 from django.views.generic import View
 from User.models import User
 from django.db.models import Value, Max, F, Case, When, Sum , Q
-from Product.models import Product, Category, Brand, Color
+from Product.models import Product, Category, Brand, Color , orderByPopulariy , orderByDate , orderByPrice
 from django.core.paginator import Paginator
 from django.db import connection , reset_queries
 import math
@@ -11,15 +11,12 @@ import math
 
 
 def getProductPagination(req,listProducts):
-    step = 1 # How many products to display
+    step = 3 # How many products to display
     def noneVal():
         pagination = Paginator([], step)
         pagination.currentPage = 1
         pagination.step = step
         return [], pagination.get_page(1), pagination
-
-
-
     numberPage = req.GET.get('page') or 1
     pagination = Paginator(listProducts,step)
     try:
@@ -48,12 +45,9 @@ def getProductPagination(req,listProducts):
 class products(View):
     template_name = 'Products/index.html'
 
-
     def get(self, request, *args, **kwargs):
         context = {}
-        getProducts = Product.getProducts.select_related('brand').prefetch_related('colors','categories').all()
-
-
+        getProducts = Product.getProducts.select_related('brand').prefetch_related('categories').all()
 
         # Search Products
         searchIsActive = request.GET.get('search') or False
@@ -65,7 +59,6 @@ class products(View):
             else:
                 lookUp = Q(title__icontains=searchIsActive) | Q(categories__title__icontains=searchIsActive)
             getProducts = getProducts.filter(lookUp)
-
 
         # Filter Products
         getCategories = Category.objects.all()
@@ -86,7 +79,6 @@ class products(View):
                 except:
                     pass
             return None
-
 
         if filterIsActive == 'true':
             filter_categories = request.GET.get('cats') or False
@@ -122,7 +114,7 @@ class products(View):
 
             # Filter products
             try:
-                getProducts = getProducts.filter(categories__in=filter_categories, colors__in=filter_colors,
+                getProducts = getProducts.filter(categories__in=filter_categories, stockProduct__color__in=filter_colors,colors__count__gt=0,
                                                  brand__in=filter_brands, price__gte=priceStart, price__lte=priceEnd)
             except:
                 pass
@@ -142,16 +134,23 @@ class products(View):
         except:
             getBrands = getBrands.annotate(filterBrandSelected=Value(True))
 
-
-        # Pagination
-        getProducts = getProducts.distinct()
-        context['countAllProduct'] = len(getProducts)
-        resultProducts, pageActive, pagination = getProductPagination(request, getProducts)
-
-
         #Order
         #By default ordered by popularity
+        getProducts = getProducts.distinct()
+        orderBy = request.GET.get('orderby') or 'popularity'
+        if orderBy == 'popularity':
+            getProducts = orderByPopulariy(getProducts)
+        elif orderBy == 'date':
+            getProducts = orderByDate(getProducts)
+        elif orderBy == 'price':
+            getProducts = orderByPrice(getProducts)
+        else:
+            # If it reaches this part : orderByID => show latest
+            pass
 
+        # Pagination
+        context['countAllProduct'] = len(getProducts)
+        resultProducts , pageActive, pagination = getProductPagination(request, getProducts)
 
         # Response
         context['highsetPriceProduct'] = highsetPriceProduct
@@ -165,6 +164,12 @@ class products(View):
         context['filterIsActive'] = filterIsActive
         context['pageActive'] = pageActive
         context['pagination'] = pagination
-
-
         return render(request, self.template_name, context)
+
+
+
+class product(View):
+    template_name = 'Product/index.html'
+
+    def get(self,request,slug):
+        return render(request,self.template_name)

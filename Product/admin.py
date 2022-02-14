@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product , Category , Image , Color , Brand
+from .models import Product , Category , Image , Color , Size , Brand , ProductStock
 # Register your models here.
 
 @admin.register(Product)
@@ -14,3 +14,5 @@ admin.site.register(Category)
 admin.site.register(Image)
 admin.site.register(Color)
 admin.site.register(Brand)
+admin.site.register(Size)
+admin.site.register(ProductStock)

@@ -25,7 +25,7 @@
         {% include 'Base/Header/index.html' %}
 
         <main class="main">
-            <div class="page-header text-center" style="background-image: url('/assets/images/backgrounds/bg-1.jpg')">
+            <div class="page-header text-center" >
                 <div class="container-fluid">
                     {#                    <h1 class="page-title">Fullwidth No Sidebar<span>Shop</span></h1>#}
                 </div><!-- End .container-fluid -->
@@ -34,7 +34,7 @@
                 <div class="container-fluid">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{% url 'product:products' %}">Products</a></li>
+                        <li class="breadcrumb-item">Products</li>
                     </ol>
                 </div><!-- End .container-fluid -->
             </nav><!-- End .breadcrumb-nav -->
@@ -94,6 +94,14 @@
                         <div class="row">
                             {% for product in products %}
                                 {% include 'Products/CardProduct.html' with product=product %}
+                                {% empty %}
+                                <div class="text-center w-100 my-5">
+                                    <img src="/assets/images/default/product/ImageBoxEmpty.jpg" class="d-block mx-auto mb-1" alt="Empty" style="width: 350px">
+                                    <h4>No product</h4>
+                                    <br>
+                                    <br>
+                                    <br>
+                                </div>
                             {% endfor %}
                         </div><!-- End .row -->
 
@@ -444,128 +452,144 @@
             window._pageNum = 1
         }
     </script>
-    <script>// script for filter section
-    let categoriesSelected = []
-    let colorsSelected = []
-    let brandsSelected = []
-    let inputColorFilter = document.querySelectorAll('[color-input-filter]')
-    for (let inp of inputColorFilter) {
-        inp.onclick = function (e) {
-            let selected = this.getAttribute('selected') || 'false'
-            if (selected == 'false') {
-                this.setAttribute('selected', 'true')
-            } else {
-                this.setAttribute('selected', 'false')
-            }
-        }
-    }
-
-    let applyFilters = document.getElementById('applyFilters')
-    let filterItemsCategory = document.getElementById('filter-items-category')
-    let filterItemsColor = document.getElementById('filter-items-color')
-    let filterItemsBrand = document.getElementById('filter-items-brand')
-
-    applyFilters.addEventListener('click', function () {
-        let inputCategories = filterItemsCategory.querySelectorAll('input')
-        for (let inp of inputCategories) {
-            if (inp.checked) {
-                let urlFilter = inp.getAttribute('url-filter')
-                categoriesSelected.push(urlFilter)
-            }
-        }
-
-        let btntColor = filterItemsColor.querySelectorAll('button')
-        for (let btn of btntColor) {
-            let checked = (btn.getAttribute('selected') || 'false') == 'true'
-            if (checked) {
-                let urlFilter = btn.getAttribute('url-filter')
-                colorsSelected.push(urlFilter)
-            }
-        }
-
-        let inputBrands = filterItemsBrand.querySelectorAll('input')
-        for (let inp of inputBrands) {
-            if (inp.checked) {
-                let urlFilter = inp.getAttribute('url-filter')
-                brandsSelected.push(urlFilter)
-            }
-        }
-
-
-        let url = new URLSearchParams(window.location.search);
-        url.set('page', '1')
-        url.set('filter', 'true')
-        url.set('cats', categoriesSelected.join('_'))
-        url.set('brands', brandsSelected.join('_'))
-        url.set('colors', colorsSelected.join('_'))
-        url.set('range', window._rangePriceFilter)
-        window.location.search = url;
-
-
-    })
-
-    function insertParam(key, value, refresh = true) {
-        key = encodeURIComponent(key);
-        value = encodeURIComponent(value);
-        var kvp = document.location.search.substr(1).split('&');
-        let i = 0;
-        for (; i < kvp.length; i++) {
-            if (kvp[i].startsWith(key + '=')) {
-                let pair = kvp[i].split('=');
-                pair[1] = value;
-                kvp[i] = pair.join('=');
-                break;
-            }
-        }
-        if (i >= kvp.length) {
-            kvp[kvp.length] = [key, value].join('=');
-        }
-        let params = kvp.join('&');
-        document.location.search = params;
-    }
-
-    function removeParam(key, sourceURL) {
-        var rtn = sourceURL.split("?")[0],
-            param,
-            params_arr = [],
-            queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-        if (queryString !== "") {
-            params_arr = queryString.split("&");
-            for (var i = params_arr.length - 1; i >= 0; i -= 1) {
-                param = params_arr[i].split("=")[0];
-                if (param === key) {
-                    params_arr.splice(i, 1);
+    <script>
+        // filter
+        let categoriesSelected = []
+        let colorsSelected = []
+        let brandsSelected = []
+        let inputColorFilter = document.querySelectorAll('[color-input-filter]')
+        for (let inp of inputColorFilter) {
+            inp.onclick = function (e) {
+                let selected = this.getAttribute('selected') || 'false'
+                if (selected == 'false') {
+                    this.setAttribute('selected', 'true')
+                } else {
+                    this.setAttribute('selected', 'false')
                 }
             }
-            if (params_arr.length) rtn = rtn + "?" + params_arr.join("&");
         }
-        return rtn;
-    }
 
-    // Pagination
+        let applyFilters = document.getElementById('applyFilters')
+        let filterItemsCategory = document.getElementById('filter-items-category')
+        let filterItemsColor = document.getElementById('filter-items-color')
+        let filterItemsBrand = document.getElementById('filter-items-brand')
 
-    let btnsPage = document.querySelectorAll('[btn-page-pagination]')
-    for (let btn of btnsPage) {
-        btn.addEventListener('click', function () {
-            console.log(this)
-            let pageNum = this.getAttribute('pageNum')
-            insertParam('page', pageNum)
+        applyFilters.addEventListener('click', function () {
+            let inputCategories = filterItemsCategory.querySelectorAll('input')
+            for (let inp of inputCategories) {
+                if (inp.checked) {
+                    let urlFilter = inp.getAttribute('url-filter')
+                    categoriesSelected.push(urlFilter)
+                }
+            }
+
+            let btntColor = filterItemsColor.querySelectorAll('button')
+            for (let btn of btntColor) {
+                let checked = (btn.getAttribute('selected') || 'false') == 'true'
+                if (checked) {
+                    let urlFilter = btn.getAttribute('url-filter')
+                    colorsSelected.push(urlFilter)
+                }
+            }
+
+            let inputBrands = filterItemsBrand.querySelectorAll('input')
+            for (let inp of inputBrands) {
+                if (inp.checked) {
+                    let urlFilter = inp.getAttribute('url-filter')
+                    brandsSelected.push(urlFilter)
+                }
+            }
+
+
+            let url = new URLSearchParams(window.location.search);
+            url.set('page', '1')
+            url.set('filter', 'true')
+            url.set('cats', categoriesSelected.join('_'))
+            url.set('brands', brandsSelected.join('_'))
+            url.set('colors', colorsSelected.join('_'))
+            url.set('range', window._rangePriceFilter)
+            window.location.search = url;
+
+
         })
-    }
 
-    let btnNextPage = document.querySelector('[btn-next-page-pagination]')
-    let btnPreVioustPage = document.querySelector('[btn-previous-page-pagination]')
+        function insertParam(key, value) {
+            key = encodeURIComponent(key);
+            value = encodeURIComponent(value);
+            var kvp = document.location.search.substr(1).split('&');
+            let i = 0;
+            for (; i < kvp.length; i++) {
+                if (kvp[i].startsWith(key + '=')) {
+                    let pair = kvp[i].split('=');
+                    pair[1] = value;
+                    kvp[i] = pair.join('=');
+                    break;
+                }
+            }
+            if (i >= kvp.length) {
+                kvp[kvp.length] = [key, value].join('=');
+            }
+            let params = kvp.join('&');
+            document.location.search = params;
+        }
 
-    if (btnNextPage) {
-        btnNextPage.addEventListener('click', function () {
-            insertParam('page', window._pageNum + 1)
-        })
-    }
-    if (btnPreVioustPage) {
-        btnPreVioustPage.addEventListener('click', function () {
-            insertParam('page', window._pageNum - 1)
-        })
-    }
+        function removeParam(key, sourceURL) {
+            var rtn = sourceURL.split("?")[0],
+                param,
+                params_arr = [],
+                queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+            if (queryString !== "") {
+                params_arr = queryString.split("&");
+                for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+                    param = params_arr[i].split("=")[0];
+                    if (param === key) {
+                        params_arr.splice(i, 1);
+                    }
+                }
+                if (params_arr.length) rtn = rtn + "?" + params_arr.join("&");
+            }
+            return rtn;
+        }
+
+        // Pagination
+
+        let btnsPage = document.querySelectorAll('[btn-page-pagination]')
+        for (let btn of btnsPage) {
+            btn.addEventListener('click', function () {
+                console.log(this)
+                let pageNum = this.getAttribute('pageNum')
+                insertParam('page', pageNum)
+            })
+        }
+
+        let btnNextPage = document.querySelector('[btn-next-page-pagination]')
+        let btnPreVioustPage = document.querySelector('[btn-previous-page-pagination]')
+
+        if (btnNextPage) {
+            btnNextPage.addEventListener('click', function () {
+                insertParam('page', window._pageNum + 1)
+            })
+        }
+        if (btnPreVioustPage) {
+            btnPreVioustPage.addEventListener('click', function () {
+                insertParam('page', window._pageNum - 1)
+            })
+        }
+
+
+        //sort
+        let sortby = document.getElementById('sortby')
+        let urlSortBy = new URLSearchParams(window.location.search)
+        let orderedBy = urlSortBy.get('orderby')
+        try {
+            sortby.querySelector(`[value=${orderedBy}]`).selected = 'selected'
+        }catch (e) {}
+        sortby.onchange = function () {
+            urlSortBy.set('orderby', this.value)
+            urlSortBy.set('page', 1)
+            window.location.search = urlSortBy
+        }
+
     </script>
 {% endblock %}
 
