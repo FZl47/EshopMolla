@@ -17,7 +17,7 @@
     <meta name="msapplication-TileColor" content="#cc9966">
     <meta name="msapplication-config" content="assets/images/icons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-
+    <link rel="stylesheet" href="/assets/font_awesome/css/all.css">
     {% block Head %}
     {% endblock %}
     <title>
@@ -26,11 +26,266 @@
     </title>
     {% block Link %}
     {% endblock %}
+
+    {% block Css %}
+    {% endblock %}
+    <style>
+        #ContainerNotificationsMessage {
+            position: fixed;
+            top: 1%;
+            right: 1%;
+            z-index: 9999999;
+            max-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .NotificationMessage {
+            position: relative;
+            padding: 4px;
+            margin: 15px 10px;
+            width: 300px;
+            box-shadow: 0 5px 8px rgba(148, 148, 148, 0.1);
+            direction: rtl;
+            text-align: center;
+            border-radius: 4px;
+            transition: all 1s;
+            background: #ffffff;
+            animation: ShowNotification_Animation_1 .3s;
+        }
+
+        .Notification_Removed{
+            animation: Animation_Notification_Removed .25s forwards;
+        }
+
+        @keyframes Animation_Notification_Removed {
+            100%{
+                transform: translateX(-300px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes ShowNotification_Animation_1 {
+            0% {
+                transform: translateX(100px);
+            }
+            100% {
+                transform: translateX(0) translateY(0);
+            }
+        }
+
+        .LevelOfNecessity_1 {
+            width: 250px;
+        }
+
+        .LevelOfNecessity_1 p {
+            font-size: 90%;
+        }
+
+        .LevelOfNecessity_2 {
+            width: 280px;
+        }
+
+        .LevelOfNecessity_2 p {
+            font-size: 95%;
+        }
+
+        .LevelOfNecessity_3 {
+            width: 330px;
+        }
+
+        .LevelOfNecessity_3 p {
+            font-size: 100%;
+        }
+
+        .LevelOfNecessity_4 {
+            width: 350px;
+        }
+
+        .LevelOfNecessity_4 p {
+            font-size: 110%;
+        }
+
+        .LevelOfNecessity_5 {
+            width: 400px;
+        }
+
+        .LevelOfNecessity_5 p {
+            font-size: 120%;
+        }
+
+
+        .NotificationMessage p {
+            margin: 0;
+            margin-top: 2px;
+            padding-bottom: 20px;
+        }
+
+        .IconNotification {
+            position: absolute;
+            left: 7px;
+            top: 7px;
+            font-size: 110%;
+        }
+
+        .IconNotification_Success {
+            color: #1af196;
+        }
+
+        .IconNotification_Error {
+            color: #f15368;
+        }
+
+        .IconNotification_Warning {
+            color: #ffaf07;
+        }
+
+        .BtnCloseNotification {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            text-align: right;
+            display: block !important;
+            font-size: 95%;
+            cursor: pointer;
+            transform: rotate(0) !important;
+            color: #ff7e79;
+        }
+
+        .BtnCloseNotification:hover {
+            color: #ff0c00;
+        }
+
+        .NotificationSuccess {
+            box-shadow: 0 3px 1px #1af196;
+        }
+
+        .NotificationSuccess p {
+            color: #17c3b2;
+        }
+
+        .NotificationError {
+            box-shadow: 0 3px 1px #f15368;
+        }
+
+        .NotificationError p {
+            color: #ff4558;
+        }
+
+        .NotificationWarning {
+            border: 1px solid rgba(255, 209, 51, 0.35);
+            box-shadow: 0 3px 1px #ffaf07;
+        }
+
+        .NotificationWarning p {
+            color: #ffaf07;
+        }
+
+        .Success {
+            box-shadow: 0 0 3px #17c3b2;
+            color: #17c3b2;
+        }
+
+        .Success p {
+            color: #17c3b2;
+        }
+
+        .Alert {
+            box-shadow: 0 0 3px #ff4558;
+            color: #ff4558;
+        }
+
+        .Alert p {
+            color: #ff4558;
+        }
+
+        .Warning {
+            box-shadow: 0 0 3px #ffd070;
+        }
+
+        .Warning p {
+            color: #e0bc5e;
+        }
+
+    </style>
 </head>
 <body>
 {% block Content %}
 
 {% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<script>
+
+    let LIST_ALL_NOTIFICATIONS_INSTANCE = []
+    let COUNTER_CREATE_NOTIFICATIONS = 0
+
+    class ShowNotificationMessage_Model {
+        constructor(Text, Type, Timer = 5000, LevelOfNecessity = 3) {
+            COUNTER_CREATE_NOTIFICATIONS += 1
+            LIST_ALL_NOTIFICATIONS_INSTANCE.push(this)
+            this.ID_Notification = COUNTER_CREATE_NOTIFICATIONS
+            this.Index_Notification = LIST_ALL_NOTIFICATIONS_INSTANCE.length - 1
+
+            let ContainerNotifications = document.getElementById('ContainerNotificationsMessage')
+            if (ContainerNotifications == undefined) {
+                ContainerNotifications = document.createElement('div')
+                ContainerNotifications.id = 'ContainerNotificationsMessage'
+            }
+            let ContainerMessage = document.createElement('div')
+            let Message = document.createElement('p')
+            let BtnClose = document.createElement('i')
+            let Icon = document.createElement('i')
+
+            ContainerMessage.setAttribute('ID_Notification', this.ID_Notification)
+            BtnClose.setAttribute('Index_Notification', this.Index_Notification)
+
+            ContainerMessage.classList.add('NotificationMessage')
+            ContainerMessage.classList.add(`LevelOfNecessity_${LevelOfNecessity}`)
+            ContainerMessage.classList.add(`Notification${Type}`)
+            Message.innerText = Text
+            BtnClose.className = 'fa fa-times BtnCloseNotification'
+            if (Type == 'Success') {
+                Icon.className = 'fa fa-check-circle IconNotification IconNotification_Success'
+            } else if (Type == 'Error') {
+                Icon.className = 'fa fa-times-hexagon IconNotification IconNotification_Error '
+            } else if (Type == 'Warning') {
+                Icon.className = 'fa fa-exclamation-triangle IconNotification IconNotification_Warning'
+            }
+            ContainerMessage.appendChild(Icon)
+            ContainerMessage.appendChild(BtnClose)
+            ContainerMessage.appendChild(Message)
+            ContainerNotifications.appendChild(ContainerMessage)
+            document.body.appendChild(ContainerNotifications)
+            this.ContainerMessage = ContainerMessage
+            let Index_Notification = this.Index_Notification
+            setTimeout(function () {
+                RemoveNotification_Func(Index_Notification)
+            }, Timer)
+
+            BtnClose.onclick = function (e) {
+                let Index_Notification = e.target.getAttribute('Index_Notification')
+                RemoveNotification_Func(Index_Notification)
+            }
+        }
+
+    }
+
+    function RemoveNotification_Func(Index) {
+        let Instance = LIST_ALL_NOTIFICATIONS_INSTANCE[Index]
+        Instance.ContainerMessage.classList.add('Notification_Removed')
+        setTimeout(function () {
+            Instance.ContainerMessage.remove()
+            delete Instance
+        },300)
+    }
+
+    function ShowNotificationMessage(Text, Type, Timer = 5000, LevelOfNecessity = 3) {
+        new ShowNotificationMessage_Model(Text, Type, Timer, LevelOfNecessity)
+    }
+
+
+</script>
 {% block Js %}
 {% endblock %}
 
