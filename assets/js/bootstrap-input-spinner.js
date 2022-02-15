@@ -27,7 +27,7 @@
             buttonsClass: "btn-outline-secondary",
             buttonsWidth: "2.5rem",
             textAlign: "center",
-            autoDelay: 500, // ms holding before auto value change
+            autoDelay: 0, // ms holding before auto value change
             autoInterval: 100, // speed of auto value change
             boostThreshold: 10, // boost after these steps
             boostMultiplier: "auto", // you can also set a constant number as multiplier
