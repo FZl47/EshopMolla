@@ -1,4 +1,4 @@
-<div class="col-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2">
+<div class="product {% if place_col == 'single' or place_col == None %}col-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2{% endif %}">
     <div class="product" style="border: 1px solid #F3F3F3">
         <figure class="product-media">
             {% if product.productIsStock %}
@@ -8,7 +8,7 @@
             {% else %}
                 <span class="product-label label-out">Out of stock</span>
             {% endif %}
-            <a href="product.html">
+            <a href="{{ product.get_absolute_url }}">
                 <img src="{{ product.getImageUrl }}" alt="{{ product.title }}"
                      class="product-image">
             </a>
@@ -18,7 +18,7 @@
             </div><!-- End .product-action -->
 
             <div class="product-action action-icon-top">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+{#                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>#}
                 {#                <a href="popup/quickView.html" class="btn-product btn-quickview"#}
                 {#                   title="Quick view"><span>quick view</span></a>#}
                 {#                <a href="#" class="btn-product btn-compare"#}
@@ -26,7 +26,7 @@
             </div><!-- End .product-action -->
         </figure><!-- End .product-media -->
         <div class="product-body p-2">
-            <h3 class="product-title"><a href="#">{{ product.title }}</a></h3>
+            <h3 class="product-title"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
             <!-- End .product-title -->
             <div class="product-price">
                 {% if product.productIsStock %}

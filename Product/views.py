@@ -1,10 +1,14 @@
-from django.shortcuts import render , Http404
+from django.shortcuts import render , Http404 , redirect , resolve_url , HttpResponse , HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
+from django.http import JsonResponse
 from django.views.generic import View
 from User.models import User
 from django.db.models import Value, Max, F, Case, When, Sum , Q
-from Product.models import Product, Category, Brand, Color , orderByPopulariy , orderByDate , orderByPrice
+from Product.models import Product, Category, Brand, Color , orderByPopulariy , orderByDate , orderByPrice , ProductStock , Cart , CartDetail
 from django.core.paginator import Paginator
 from django.db import connection , reset_queries
+from django.views.decorators.csrf import csrf_exempt
+from Config.Tools import Distinct , ListIsNone , Set_Cookie
 import math
 
 
@@ -91,7 +95,6 @@ class products(View):
                 filter_categories = getCategories.values_list('id')
 
             filter_colors = getListValueFilter(filter_colors)
-
             if filter_colors == None:
                 filter_colors = getColors.values_list('id')
 
@@ -114,7 +117,7 @@ class products(View):
 
             # Filter products
             try:
-                getProducts = getProducts.filter(categories__in=filter_categories, stockProduct__color__in=filter_colors,colors__count__gt=0,
+                getProducts = getProducts.filter(categories__in=filter_categories, productStock__color__in=filter_colors,productStock__count__gt=0,
                                                  brand__in=filter_brands, price__gte=priceStart, price__lte=priceEnd)
             except:
                 pass
@@ -168,8 +171,89 @@ class products(View):
 
 
 
+def getProductBySlug(request,slug):
+    try:
+        product_id = str(slug).split('-')[-1]
+        product = Product.objects.get(product_id=product_id)
+        return product
+    except:
+        raise Http404
+
 class product(View):
     template_name = 'Product/index.html'
 
     def get(self,request,slug):
-        return render(request,self.template_name)
+        context = {
+            'product':getProductBySlug(request,slug)
+        }
+        return render(request,self.template_name,context)
+
+
+
+@csrf_exempt
+def getStockProduct(request,slug,id,type):
+    context = {}
+    product = getProductBySlug(request,slug)
+    if type == 'color':
+        productStock = ProductStock.objects.filter(product_id=product.id,color_id=id,count__gt=0)
+        productStock = Distinct(ProductStock,productStock, 'size_id')
+    else:
+        productStock = ProductStock.objects.filter(product_id=product.id,size_id=id,count__gt=0)
+        productStock = Distinct(ProductStock,productStock,'color_id')
+
+    result = []
+    if ListIsNone(productStock) == False:
+        for ps in productStock:
+            ps_dict = {
+                'productStock_id':ps.id,
+                'count':ps.count,
+                'color':ps.color.name,
+                'color_color':ps.color.color,
+                'color_id':ps.color.id,
+                'size':ps.size.name,
+                'size_id':ps.size.id,
+                'size_title':ps.size.title
+            }
+            result.append(ps_dict)
+        context['result'] = result
+        context['status'] = '200'
+        context['type'] = type
+    else:
+        context['status'] = '404'
+    return JsonResponse(context)
+
+
+
+
+
+def addProductToCart(request,slug):
+    if request.method == 'POST':
+        data = request.POST
+        product = getProductBySlug(request,slug)
+        color = data.get('color')
+        size = data.get('size')
+        count = data.get('count')
+        try:
+            count = int(count)
+            if int(count) < 1:
+                count = 1
+            getStockProduct = ProductStock.objects.filter(product_id=product.id,color_id=color,size_id=size).first()
+            if getStockProduct != None:
+                cartDetail = CartDetail.objects.create(product_id=product.id,productStock_id=getStockProduct.id,count=count)
+                if request.user.id != None:
+                    cart = Cart.objects.filter(user_id=request.user.id).first()
+                    if cart == None:
+                        cart = Cart.objects.create(user_id=request.user.id)
+                else:
+                    getCartID = request.COOKIES.get('cartID') or None
+                    cart = Cart.objects.filter(cart_id=getCartID).first()
+                    if cart == None:
+                        cart = Cart.objects.create()
+                cart.details.add(cartDetail)
+                res = HttpResponseRedirect(resolve_url('user:cart'))
+                res = Set_Cookie(res,'cartID',cart.cart_id)
+                return res
+        except:
+            pass
+    raise PermissionDenied()
+

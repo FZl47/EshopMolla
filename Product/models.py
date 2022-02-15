@@ -5,12 +5,17 @@ from Config.Tools import RandomString
 from django.shortcuts import resolve_url
 from django.utils import timezone
 from django.core.validators import MinValueValidator
-import datetime
+import datetime , random
 
 
 
 
 # Create your models here.
+
+class TypeProduct(models.Model):
+    title = models.CharField(max_length=100)
+
+    def __str__(self):return self.title
 
 
 class Category(models.Model):
@@ -46,7 +51,7 @@ def orderByPopulariy(products):
     return products_sorted
 
 def orderByDate(products):
-    return sorted(products.order_by('-datecreate'),key=lambda i: i.productIsStock)[::-1]
+    return sorted(products.order_by('datecreate'),key=lambda i: i.productIsStock)[::-1]
 
 def orderByPrice(products):
     return sorted(products.order_by('price'),key=lambda i: i.productIsStock)[::-1]
@@ -55,6 +60,10 @@ class ProductManagerCustomize(models.Manager):
     def get_queryset(self):
         products = super().get_queryset().filter(status_show='active')
         return products
+
+    def getProductsStock(self):
+        return self.get_queryset().filter(productStock__count__gt=0).distinct()
+
 
 
 class Product(models.Model):
@@ -68,8 +77,10 @@ class Product(models.Model):
     )
 
     product_id = models.CharField(max_length=20, editable=False)
+    type_product = models.ForeignKey('Product.TypeProduct',on_delete=models.CASCADE,related_name='product')
     title = models.CharField(max_length=300)
     description = models.TextField()
+    information = models.TextField()
     price = models.DecimalField(max_digits=12, decimal_places=2)
     datecreate = models.DateTimeField(auto_now_add=True)
     dateupdate = models.DateTimeField(auto_now=True)
@@ -91,9 +102,14 @@ class Product(models.Model):
     def gerPrice(self):
         return self.price
 
+    def getSlug(self):
+        slug = f"{self.title.replace(' ', '-')}-{self.product_id}"
+        return slug
+
     @property
-    def get_absolue_url(self):
-        return f"{resolve_url('product:product')}/{self.title.replace(' ', '-')}-{self.product_id}"
+    def get_absolute_url(self):
+        slug = self.getSlug()
+        return resolve_url('product:product',slug=slug)
 
     @property
     def getImageUrl(self):
@@ -106,7 +122,7 @@ class Product(models.Model):
     @property
     def isNew(self):
         # How long product is new
-        _day = 4
+        _day = 2
         return True if (self.datecreate + datetime.timedelta(days=_day)) > timezone.now() else False
 
     @property
@@ -124,10 +140,25 @@ class Product(models.Model):
         #  3 * 20 => 60%
         return _rating * 20   # for get rating by Percentage
 
+    def getReviews(self):
+        return 2
 
     def getColors(self):
-        colors = Color.objects.filter(productStock__product__id=self.id).distinct()
+        colors = Color.objects.filter(productStock__product__id=self.id,productStock__count__gt=0).distinct()
         return colors
+
+    def getSizes(self):
+        sizes = Size.objects.filter(productStock__product__id=self.id,productStock__count__gt=0).distinct()
+        return sizes
+
+    def getProductRelated(self):
+        products = Product.getProducts.getProductsStock().filter(type_product=self.type_product).exclude(id=self.id).distinct()
+        count_select_product = 7
+        if products.count() < 5:
+            count_select_product = products.count()
+        products = random.sample(list(products),count_select_product)
+        return products
+
 
 
     def __str__(self):
@@ -169,6 +200,7 @@ class Color(models.Model):
 
 
 class Size(models.Model):
+    title = models.CharField(max_length=50)
     name = models.CharField(max_length=40)
 
     def __str__(self):
@@ -179,10 +211,41 @@ class ProductStock(models.Model):
     product = models.ForeignKey('Product.Product',on_delete=models.CASCADE,related_name='productStock')
     count = models.PositiveIntegerField(validators=[MinValueValidator(0)])
     color = models.ForeignKey('Product.Color',on_delete=models.CASCADE,related_name='productStock')
-    size = models.ForeignKey('Product.Size',on_delete=models.CASCADE)
+    size = models.ForeignKey('Product.Size',on_delete=models.CASCADE,related_name='productStock')
 
     def productIsStock(self):
         return self.count > 0
 
     def __str__(self):
         return f'{self.product.title}-{self.color.name}-{self.count}'
+
+
+
+class Cart(models.Model):
+    cart_id = models.CharField(max_length=50)
+    user = models.ForeignKey('User.User', on_delete=models.CASCADE,null=True)
+    details = models.ManyToManyField('Product.CartDetail',related_name='cart')
+
+    def save(self,*args,**kwargs):
+        if self.pk is None:
+            self.cart_id = RandomString(50)
+        super(Cart,self).save(*args,**kwargs)
+
+
+    def __str__(self):
+        if self.user != None:
+            return f'{self.user} - Cart'
+        return f'{self.cart_id} - Cart'
+
+
+class CartDetail(models.Model):
+    productStock = models.ForeignKey('Product.ProductStock',on_delete=models.CASCADE)
+    product = models.ForeignKey('Product.Product',on_delete=models.CASCADE)
+    count = models.IntegerField()
+    dateTimeCreated = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        print(self.cart.first())
+        if self.cart.first().user != None:
+            return f'{self.cart.first().user} - Cart Detail'
+        return f'{self.cart.first().cart_id} - Cart Detail'
