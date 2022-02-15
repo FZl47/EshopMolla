@@ -266,7 +266,7 @@ def ListIsNone(List):
         return True
 
 
-def RandomString(Len=14):
+def RandomString(Len=18):
     return ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=Len))
 
 
@@ -277,3 +277,20 @@ def Get_IP(request):
     else:
         IP = request.META.get('REMOTE_ADDR')
     return IP
+
+
+def Distinct(model,querySet,field):
+    set_itreable = []
+    dict_obj = {}
+    for o in querySet:
+        set_itreable.append(getattr(o,field))
+        dict_obj[getattr(o,field)] = o
+    return list(dict_obj.values())
+
+
+def ListIsNone(List):
+    try:
+        List[0]
+        return False
+    except:
+        return True
