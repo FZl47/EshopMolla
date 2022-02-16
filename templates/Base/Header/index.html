@@ -1,48 +1,49 @@
-<header class="header header-9 pb-4" {% if place != 'Home' %}style="background-image: url('/assets/images/backgrounds/bg-1.jpg')"{% endif %}>
-    <div class="header-middle sticky-header">
-        <div class="container">
-            <div class="header-left">
-                <button class="mobile-menu-toggler">
-                    <span class="sr-only">Toggle mobile menu</span>
-                    <i class="icon-bars"></i>
-                </button>
+{% load FilterTags %}
+{% load humanize %}
+{% with Cart=request|getCart WishList=request|getWishList %}
+    <header class="header header-9 pb-4"
+            {% if place != 'Home' %}style="background-image: url('/assets/images/backgrounds/bg-1.jpg')"{% endif %}>
+        <div class="header-middle sticky-header">
+            <div class="container">
+                <div class="header-left">
+                    <button class="mobile-menu-toggler">
+                        <span class="sr-only">Toggle mobile menu</span>
+                        <i class="icon-bars"></i>
+                    </button>
 
-                <a href="{% url 'public:home' %}" class="logo">
-                    <img src="/assets/images/demos/demo-12/logo.png" alt="Molla Logo" width="82" height="25">
-                </a>
-            </div><!-- End .header-left -->
-            <div class="header-right">
-                <nav class="main-nav">
-                    <ul class="menu sf-arrows">
-                        {% url 'public:home' as url_home %}
-                        <li class="megamenu-container {% if url_home == request.path %}active{% endif %}">
-                            <a href="{{ url_home }}" class="sf-with-ul">Home</a>
-                        </li>
-                        <li>
-                            {% url 'product:products' as url_products %}
-                            <a href="{% url 'product:products' %}" class="sf-with-ul {% if request.path == url_products %}active{% endif %}">Product</a>
-                            <div class="megamenu megamenu-sm">
-                                <div class="row no-gutters">
-                                    <div class="col-md-6">
-                                        <div class="menu-col">
-                                            <div class="menu-title">Categories</div>
-                                            <!-- End .menu-title -->
-                                            <ul>
-                                                <li><a href="product.html">Default</a></li>
-                                                <li><a href="product-centered.html">Centered</a></li>
-                                                <li><a href="product-extended.html"><span>Extended Info<span
-                                                        class="tip tip-new">New</span></span></a></li>
-                                                <li><a href="product-gallery.html">Gallery</a></li>
-                                                <li><a href="product-sticky.html">Sticky Info</a></li>
-                                                <li><a href="product-sidebar.html">Boxed With Sidebar</a></li>
-                                                <li><a href="product-fullwidth.html">Full Width</a></li>
-                                                <li><a href="product-masonry.html">Masonry Sticky Info</a></li>
-                                            </ul>
-                                        </div><!-- End .menu-col -->
-                                    </div><!-- End .col-md-6 -->
-                                    <div class="col-md-6">
-                                        <div class="banner banner-overlay">
-{#                                            <a href="category.html">#}
+                    <a href="{% url 'public:home' %}" class="logo">
+                        <img src="/assets/images/demos/demo-12/logo.png" alt="Molla Logo" width="82" height="25">
+                    </a>
+                </div><!-- End .header-left -->
+                <div class="header-right">
+                    <nav class="main-nav">
+                        <ul class="menu sf-arrows">
+                            {% url 'public:home' as url_home %}
+                            <li class="megamenu-container {% if url_home == request.path %}active{% endif %}">
+                                <a href="{{ url_home }}" class="sf-with-ul">Home</a>
+                            </li>
+                            <li>
+                                {% url 'product:products' as url_products %}
+                                <a href="{% url 'product:products' %}"
+                                   class="sf-with-ul {% if request.path == url_products %}active{% endif %}">Product</a>
+                                <div class="megamenu megamenu-sm">
+                                    <div class="row no-gutters">
+                                        <div class="col-md-6">
+                                            <div class="menu-col">
+                                                <div class="menu-title">Categories</div>
+                                                <!-- End .menu-title -->
+                                                <ul>
+                                                    {% for Category in request|getCategories %}
+                                                        <li>
+                                                            <a href="{{ Category.get_absolute_url }}&page=1">{{ Category }}</a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div><!-- End .menu-col -->
+                                        </div><!-- End .col-md-6 -->
+                                        <div class="col-md-6">
+                                            <div class="banner banner-overlay">
+                                                {#                                            <a href="category.html">#}
                                                 <img src="/assets/images/menu/banner-2.jpg" alt="Banner">
                                                 <div class="banner-content banner-content-bottom">
                                                     <div class="banner-title text-white">New
@@ -50,103 +51,95 @@
                                                     </div>
                                                     <!-- End .banner-title -->
                                                 </div><!-- End .banner-content -->
-{#                                            </a>#}
-                                        </div><!-- End .banner -->
-                                    </div><!-- End .col-md-6 -->
-                                </div><!-- End .row -->
-                            </div><!-- End .megamenu megamenu-sm -->
-                        </li>
-                        <li>
-                            <a href="#" class="sf-with-ul">About us</a>
-                        </li>
-                        <li>
-                            <a href="#" class="sf-with-ul">Contact us</a>
-                        </li>
-                    </ul><!-- End .menu -->
-                </nav><!-- End .main-nav -->
+                                                {#                                            </a>#}
+                                            </div><!-- End .banner -->
+                                        </div><!-- End .col-md-6 -->
+                                    </div><!-- End .row -->
+                                </div><!-- End .megamenu megamenu-sm -->
+                            </li>
+                            <li>
+                                <a href="#" class="sf-with-ul">About us</a>
+                            </li>
+                            <li>
+                                <a href="#" class="sf-with-ul">Contact us</a>
+                            </li>
+                        </ul><!-- End .menu -->
+                    </nav><!-- End .main-nav -->
 
-                <div class="header-search">
-                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                    <form action="{% url 'product:products' %}" method="get">
-                        <div class="header-search-wrapper">
-                            <label for="q" class="sr-only">Search</label>
-                            <input type="search" class="form-control" name="search" id="input-search" placeholder="Search in..."
-                                   required>
-                        </div><!-- End .header-search-wrapper -->
-                    </form>
-                </div><!-- End .header-search -->
+                    <div class="header-search">
+                        <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                        <form action="{% url 'product:products' %}" method="get">
+                            <div class="header-search-wrapper">
+                                <label for="q" class="sr-only">Search</label>
+                                <input type="search" class="form-control" name="search" id="input-search"
+                                       placeholder="Search in..."
+                                       required>
+                            </div><!-- End .header-search-wrapper -->
+                        </form>
+                    </div><!-- End .header-search -->
 
-                <a href="wishlist.html" class="wishlist-link">
-                    <i class="icon-heart-o"></i>
-                    <span class="wishlist-count">3</span>
-                </a>
-
-                <div class="dropdown cart-dropdown">
-                    <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       aria-haspopup="true"
-                       aria-expanded="false" data-display="static">
-                        <i class="icon-shopping-cart"></i>
-                        <span class="cart-count">2</span>
-                        <span class="cart-txt">$ 164,00</span>
+                    <a href="wishlist.html" class="wishlist-link">
+                        <i class="icon-heart-o"></i>
+                        <span class="wishlist-count">{{ request|getWishListCount }}</span>
                     </a>
 
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <div class="dropdown-cart-products">
-                            <div class="product">
-                                <div class="product-cart-details">
-                                    <h4 class="product-title">
-                                        <a href="product.html">Beige knitted elastic runner shoes</a>
-                                    </h4>
-
-                                    <span class="cart-product-info">
-                                                <span class="cart-product-qty">1</span>
-                                                x $84.00
-                                            </span>
-                                </div><!-- End .product-cart-details -->
-
-                                <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="assets/images/products/cart/product-1.jpg" alt="product">
-                                    </a>
-                                </figure>
-                                <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                            </div><!-- End .product -->
-
-                            <div class="product">
-                                <div class="product-cart-details">
-                                    <h4 class="product-title">
-                                        <a href="product.html">Blue utility pinafore denim dress</a>
-                                    </h4>
-
-                                    <span class="cart-product-info">
-                                                <span class="cart-product-qty">1</span>
-                                                x $76.00
-                                            </span>
-                                </div><!-- End .product-cart-details -->
-
-                                <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="assets/images/products/cart/product-2.jpg" alt="product">
-                                    </a>
-                                </figure>
-                                <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                            </div><!-- End .product -->
-                        </div><!-- End .cart-product -->
-
-                        <div class="dropdown-cart-total">
-                            <span>Total</span>
-
-                            <span class="cart-total-price">$160.00</span>
-                        </div><!-- End .dropdown-cart-total -->
-
-                        <div class="dropdown-cart-action">
-                            <a href="cart.html" class="btn btn-primary">View Cart</a>
-                            <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i
-                                    class="icon-long-arrow-right"></i></a>
-                        </div><!-- End .dropdown-cart-total -->
-                    </div><!-- End .dropdown-menu -->
-                </div><!-- End .cart-dropdown -->
-            </div><!-- End .header-right -->
-        </div><!-- End .container -->
-    </div><!-- End .header-middle -->
-</header><!-- End .header -->
+                    <div class="dropdown cart-dropdown">
+                        <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                           aria-haspopup="true"
+                           aria-expanded="false" data-display="static">
+                            <i class="icon-shopping-cart"></i>
+                            <span class="cart-count" count-buy-1>{{ Cart.getDetailsCount }}</span>
+                            <span class="cart-txt">$ <span price-buy-1 >{{ Cart.getPrice|intcomma }}</span></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            {% if Cart.getDetails != None %}
+                                <div class="dropdown-cart-products">
+                                    {% for Detail in Cart.getDetails %}
+                                        <div class="product" product-{{ forloop.counter }}>
+                                            <div class="product-cart-details">
+                                                <h4 class="product-title">
+                                                    <a href="{{ Detail.product.get_absolute_url }}">{{ Detail.product.title|truncatechars:50 }}</a>
+                                                </h4>
+                                                <span class="cart-product-info">
+                                                    <span class="cart-product-qty">{{ Detail.count }}</span>
+                                                    x ${{ Detail.product.price|intcomma }}
+                                                </span>
+                                                <div>
+                                                    <span class="text-light">{{ Detail.productStock.size }}</span>
+                                                    <span style="background: {{ Detail.productStock.color.color }};width: 8px;height: 8px;border-radius: 50%;display:inline-block;margin-left: 3px;"></span>
+                                                </div>
+                                            </div><!-- End .product-cart-details -->
+                                            <figure class="product-image-container">
+                                                <a href="{{ Detail.product.get_absolute_url }}" class="product-image">
+                                                    <img src="{{ Detail.product.getImageUrl }}"
+                                                         alt="{{ Detail.product.title }}">
+                                                </a>
+                                            </figure>
+                                            <button class="btn-remove" btn-remove-cart-detail="product-{{ forloop.counter }}" title="Remove Product"
+                                                    cartID="{{ Cart.id }}" detailID="{{ Detail.id }}"><i
+                                                    class="icon-close"></i></button>
+                                        </div><!-- End .product -->
+                                    {% endfor %}
+                                </div><!-- End .cart-product -->
+                                <div class="dropdown-cart-total">
+                                    <span>Total</span>
+                                    <span class="cart-total-price">$ <span price-buy-2>{{ Cart.getPrice|intcomma }}</span></span>
+                                </div><!-- End .dropdown-cart-total -->
+                                <div class="dropdown-cart-action">
+                                    <a href="cart.html" class="btn btn-primary">View Cart</a>
+                                    <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .dropdown-cart-total -->
+                            {% else %}
+                                <div class="text-center">
+                                    <img src="/assets/images/default/product/ImageBoxEmpty.jpg" class="w-100" alt="Empty">
+                                    <h5>no product</h5>
+                                </div>
+                            {% endif %}
+                        </div><!-- End .dropdown-menu -->
+                    </div><!-- End .cart-dropdown -->
+                </div><!-- End .header-right -->
+            </div><!-- End .container -->
+        </div><!-- End .header-middle -->
+    </header><!-- End .header -->
+{% endwith %}
