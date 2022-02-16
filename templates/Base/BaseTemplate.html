@@ -54,12 +54,12 @@
             animation: ShowNotification_Animation_1 .3s;
         }
 
-        .Notification_Removed{
+        .Notification_Removed {
             animation: Animation_Notification_Removed .25s forwards;
         }
 
         @keyframes Animation_Notification_Removed {
-            100%{
+            100% {
                 transform: translateX(-300px);
                 opacity: 0;
             }
@@ -216,6 +216,77 @@
 {% endblock %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script>
+    window.CSRF_TOKEN = '{{ csrf_token }}'
+</script>
+<script>
+
+    function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed) {
+        function __Redirect__(response) {
+            if (response.__Redirect__ == 'True') {
+                setTimeout(function () {
+                    window.location.href = response.__RedirectURL__
+                }, parseInt(response.__RedirectAfter__ || 0))
+            }
+        }
+
+        function Loading(State) {
+            if (State == 'Show') {
+                LockAllElements()
+                let ContainerLoading = document.createElement('div')
+                let CircleLoading = document.createElement('div')
+                ContainerLoading.id = 'ContainerLoadingAJAX'
+                ContainerLoading.classList.add('ContainerLoadingAJAX')
+                ContainerLoading.innerHTML = `
+                <div class="LoadingCircle"><span></span></div>
+            `
+                document.body.appendChild(ContainerLoading)
+            } else {
+                try {
+                    UnlockAllElements()
+                    document.getElementById('ContainerLoadingAJAX').remove()
+                } catch (e) {
+                }
+            }
+        }
+
+        if (Success == undefined) {
+            Success = function (response) {
+                __Redirect__(response)
+            }
+        }
+        if (Failed == undefined) {
+            Failed = function (response) {
+                ShowNotificationMessage('Could not connect to server ', 'Error', 30000, 2)
+            }
+        }
+        //Loading('Show')
+        $.ajax(
+            {
+                url: Url,
+                data: JSON.stringify(Data),
+                type: Method,
+                headers: {
+                    'X-CSRFToken': window.CSRF_TOKEN
+                },
+                success: function (response) {
+                    __Redirect__(response)
+                    //Loading('Hide')
+                    Success(response)
+                },
+                failed: function (response) {
+                    __Redirect__(response)
+                    //Loading('Hide')
+                    Failed(response)
+                },
+                error: function (response) {
+                    __Redirect__(response)
+                    //Loading('Hide')
+                    Failed(response)
+                    RemoveLoading()
+                }
+            }
+        )
+    }
 
     let LIST_ALL_NOTIFICATIONS_INSTANCE = []
     let COUNTER_CREATE_NOTIFICATIONS = 0
@@ -277,11 +348,69 @@
         setTimeout(function () {
             Instance.ContainerMessage.remove()
             delete Instance
-        },300)
+        }, 300)
     }
 
     function ShowNotificationMessage(Text, Type, Timer = 5000, LevelOfNecessity = 3) {
         new ShowNotificationMessage_Model(Text, Type, Timer, LevelOfNecessity)
+    }
+
+
+    let btnRemoveDetailCart = document.querySelectorAll('[btn-remove-cart-detail]')
+    for (let btn of btnRemoveDetailCart) {
+        btn.addEventListener('click', function () {
+            let cartID = this.getAttribute('cartID') || false
+            let detailID = this.getAttribute('detailID') || false
+            if (cartID && detailID) {
+                let productElement = document.querySelector(`[${btn.getAttribute('btn-remove-cart-detail')}]`)
+                removeDetailCart(cartID, detailID, productElement)
+            }
+        })
+    }
+
+    function removeDetailCart(cartID, detailID, productElement) {
+        let data = {
+            "cartID": String(cartID),
+            "detailID": String(detailID)
+        }
+        SendAjax('/p/removeDetailCart', data, 'POST', function (response) {
+            let status = response.status
+            if (status == '200') {
+                productElement.remove()
+                setNewTotalPrice(response.newPrice)
+                setNewCountBuy(response.newCount)
+            }
+        })
+    }
+
+    function setNewTotalPrice(price) {
+        try {
+            document.querySelector('[price-buy-1]').innerText = price
+        } catch (e) {
+        }
+        try {
+            document.querySelector('[price-buy-2]').innerText = price
+        } catch (e) {
+        }
+        try {
+            document.querySelector('[price-buy-3]').innerText = price
+        } catch (e) {
+        }
+    }
+
+    function setNewCountBuy(count) {
+        try {
+            document.querySelector('[count-buy-1]').innerText = count
+        } catch (e) {
+        }
+        try {
+            document.querySelector('[count-buy-2]').innerText = count
+        } catch (e) {
+        }
+        try {
+            document.querySelector('[count-buy-3]').innerText = count
+        } catch (e) {
+        }
     }
 
 
