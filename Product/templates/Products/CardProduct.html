@@ -12,9 +12,8 @@
                 <img src="{{ product.getImageUrl }}" alt="{{ product.title }}"
                      class="product-image">
             </a>
-
             <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                <a href="{% url 'product:addProductToWishList' slug=product.getSlug %}" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
             </div><!-- End .product-action -->
 
             <div class="product-action action-icon-top">

@@ -23,6 +23,40 @@
             display: none;
         }
 
+
+        .rating {
+            direction: rtl;
+            width: 300px;
+        }
+
+        .rating span {
+            position: relative;
+        }
+
+        .rating span input {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            opacity: 0;
+        }
+
+        .rating i{
+            display: inline-block;
+            text-align: center;
+            color: #cccccc;
+            font-size: 18px;
+            margin-right: 2px;
+            line-height: 30px;
+            border-radius: 50%;
+        }
+
+        .rating span:hover ~ span label i,
+        .rating span:hover label i,
+        .rating span.checked label i,
+        .rating span.checked ~ span label i {
+            color: #F90;
+        }
+
     </style>
 {% endblock %}
 
@@ -49,19 +83,19 @@
                                     <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
                                 </ol>
 
-                                <nav class="product-pager ml-auto" aria-label="Product">
-                                    <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous"
-                                       tabindex="-1">
-                                        <i class="icon-angle-left"></i>
-                                        <span>Prev</span>
-                                    </a>
-
-                                    <a class="product-pager-link product-pager-next" href="#" aria-label="Next"
-                                       tabindex="-1">
-                                        <span>Next</span>
-                                        <i class="icon-angle-right"></i>
-                                    </a>
-                                </nav><!-- End .pager-nav -->
+                                {#                                <nav class="product-pager ml-auto" aria-label="Product">#}
+                                {#                                    <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous"#}
+                                {#                                       tabindex="-1">#}
+                                {#                                        <i class="icon-angle-left"></i>#}
+                                {#                                        <span>Prev</span>#}
+                                {#                                    </a>#}
+                                {##}
+                                {#                                    <a class="product-pager-link product-pager-next" href="#" aria-label="Next"#}
+                                {#                                       tabindex="-1">#}
+                                {#                                        <span>Next</span>#}
+                                {#                                        <i class="icon-angle-right"></i>#}
+                                {#                                    </a>#}
+                                {#                                </nav><!-- End .pager-nav -->#}
                             </div><!-- End .container -->
                         </nav><!-- End .breadcrumb-nav -->
                         <div class="container">
@@ -95,7 +129,7 @@
 
                                     <div class="product-price">
                                         {% if product.productIsStock %}
-                                            <h4 style="color: #c96">{{ product.price }}</h4>
+                                            <h4 style="color: #c96">${{ product.price }}</h4>
                                         {% else %}
                                             <span class="text-light">
                                             Out of stock
@@ -142,7 +176,9 @@
                                             </div><!-- End .product-details-quantity -->
                                             <button id="addToCart" class="btn-product btn-cart disabled"><span>add to cart</span>
                                             </button>
-                                            <form class="d-none" id="formAddProductToCart" action="{% url 'product:product' slug=product.getSlug %}/addProductToCart" method="post">
+                                            <form class="d-none" id="formAddProductToCart"
+                                                  action="{% url 'product:product' slug=product.getSlug %}/addProductToCart"
+                                                  method="post">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="color">
                                                 <input type="hidden" name="count">
@@ -151,7 +187,9 @@
                                         </div><!-- End .details-action-col -->
 
                                         <div class="details-action-wrapper">
-                                            <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
+                                            <a href="{% url 'product:addProductToWishList' slug=product.getSlug %}"
+                                               class="btn-product btn-wishlist"
+                                               title="Wishlist"><span>add to wishlist</span></a>
                                         </div><!-- End .details-action-wrapper -->
                                     </div><!-- End .product-details-action -->
 
@@ -159,7 +197,7 @@
                                         <div class="product-cat">
                                             <span>Category:</span>
                                             {% for category in product.categories.all %}
-                                                <a href="/p/products?filter=true&cats={{ category.get_absolute_url }}">{{ category.title }}</a>
+                                                <a href="/p/products?filter=true&cats={{ category.getSlug }}">{{ category.title }}</a>
                                             {% endfor %}
                                         </div><!-- End .product-cat -->
 
@@ -239,7 +277,43 @@
                             <div class="tab-pane fade" id="product-review-tab" role="tabpanel"
                                  aria-labelledby="product-review-link">
                                 <div class="reviews">
-                                    <h3>Reviews (2)</h3>
+                                    <div class="d-flex justify-content-between mb-5">
+                                        {% if request.user.id != None %}
+                                            <h6 style="color: #c96">Write Comment  <i class="far fa-comment"></i></h6>
+                                        {% else %}
+                                            <p class="text-danger align-items-center" style="font-size: 95%">You Should
+                                                be Logged in to Post a Comment</p>
+                                        {% endif %}
+                                        <h6>Reviews (2)</h6>
+                                    </div>
+                                    {% if request.user.id != None %}
+                                        <form action="" method="post" class="col-12 col-md-7 my-5 mx-auto">
+                                            {% csrf_token %}
+                                            <label for="comment-title">Title *</label>
+                                            <input type="text" name="commentTitle" id="comment-title" required
+                                                   class="form-control" placeholder="Your title">
+                                            <label for="comment-messsage">Message *</label>
+                                            <textarea name="commentMessage" id="comment-messsage" required
+                                                      class="form-control" cols="30" rows="5"
+                                                      placeholder="Your text"></textarea>
+                                            <div class="rating">
+                                                <p dir=ltr>Score *</p>
+                                                <span><input type="radio" required name="rating" id="str5" value="5"><label
+                                                        for="str5"><i class="fa fa-star"></i></label></span>
+                                                <span><input type="radio" required name="rating" id="str4" value="4"><label
+                                                        for="str4"><i class="fa fa-star"></i></label></span>
+                                                <span><input type="radio" required name="rating" id="str3" value="3"><label
+                                                        for="str3"><i class="fa fa-star"></i></label></span>
+                                                <span><input type="radio" required name="rating" id="str2" value="2"><label
+                                                        for="str2"><i class="fa fa-star"></i></label></span>
+                                                <span><input type="radio" required name="rating" id="str1" value="1"><label
+                                                        for="str1"><i class="fa fa-star"></i></label></span>
+                                            </div>
+                                            <div class="mt-1 mb-4">
+                                                <button class="btn btn-outline-primary-2" style="width: 180px">submit <i class="icon-long-arrow-right"></i></button>
+                                            </div>
+                                        </form>
+                                    {% endif %}
                                     <div class="review">
                                         <div class="row no-gutters">
                                             <div class="col-auto">
@@ -359,7 +433,6 @@
                        placeholder="Search in..." required>
                 <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
             </form>
-
             <nav class="mobile-nav">
                 <ul class="mobile-menu">
                     <li class="active">
@@ -512,7 +585,6 @@
                     </li>
                 </ul>
             </nav><!-- End .mobile-nav -->
-
             <div class="social-icons">
                 <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
                 <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
@@ -804,6 +876,19 @@
             productStockSelected.count = this.value
         })
 
+
+        // Star rating comment
+        // Check Radio-box
+        $(".rating input:radio").attr("checked", false);
+
+        $('.rating input').click(function () {
+            $(".rating span").removeClass('checked');
+            $(this).parent().addClass('checked');
+        });
+        $('input:radio').change(
+            function () {
+                let userRating = this.value;
+            });
 
     </script>
 {% endblock %}

@@ -25,7 +25,7 @@
                                     <label class="custom-control-label"
                                            for="cat-{{ forloop.counter }}">{{ category.title }}</label>
                                 </div><!-- End .custom-checkbox -->
-                                <span class="item-count">{{ category.product.count }}</span>
+                                <span class="item-count">{{ category.getProducts.count }}</span>
                             </div><!-- End .filter-item -->
                         {% endfor %}
                     </div><!-- End .filter-items -->

@@ -1,31 +1,32 @@
-from django.shortcuts import render , Http404 , redirect , resolve_url , HttpResponse , HttpResponseRedirect
+from django.shortcuts import render, Http404, redirect, resolve_url, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.views.generic import View
 from User.models import User
-from django.db.models import Value, Max, F, Case, When, Sum , Q
-from Product.models import Product, Category, Brand, Color , orderByPopulariy , orderByDate , orderByPrice , ProductStock , Cart , CartDetail
+from django.db.models import Value, Max, F, Case, When, Sum, Q
+from Product.models import Product, Category, Brand, Color, orderByPopulariy, orderByDate, orderByPrice, ProductStock, \
+    Cart, CartDetail, WishDetail, WishList
 from django.core.paginator import Paginator
-from django.db import connection , reset_queries
-from django.views.decorators.csrf import csrf_exempt
-from Config.Tools import Distinct , ListIsNone , Set_Cookie
-import math
+from django.db import connection, reset_queries
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from Config.Tools import Distinct, ListIsNone, Set_Cookie
+import math , json
 
 
+def getProductPagination(req, listProducts):
+    step = 3  # How many products to display
 
-
-def getProductPagination(req,listProducts):
-    step = 3 # How many products to display
     def noneVal():
         pagination = Paginator([], step)
         pagination.currentPage = 1
         pagination.step = step
         return [], pagination.get_page(1), pagination
+
     numberPage = req.GET.get('page') or 1
-    pagination = Paginator(listProducts,step)
+    pagination = Paginator(listProducts, step)
     try:
         numberPage = int(numberPage)
-        if numberPage < 1 :
+        if numberPage < 1:
             numberPage = 1
         pagination.currentPage = numberPage
         pagination.step = step
@@ -33,8 +34,8 @@ def getProductPagination(req,listProducts):
         pagination.lastPage = pagination.countPages
         listRange = []
         if numberPage - 1 > 1:
-            listRange.append(numberPage-1)
-        for i in range(numberPage,numberPage+3):
+            listRange.append(numberPage - 1)
+        for i in range(numberPage, numberPage + 3):
             if i < pagination.lastPage and i > 1:
                 listRange.append(i)
         pagination.listRange = listRange
@@ -42,7 +43,7 @@ def getProductPagination(req,listProducts):
         return noneVal()
     if numberPage <= pagination.num_pages:
         getPage = pagination.get_page(numberPage)
-        return getPage.object_list , getPage , pagination
+        return getPage.object_list, getPage, pagination
     return noneVal()
 
 
@@ -59,7 +60,8 @@ class products(View):
             context['searchIsActive'] = True
             context['searchContent'] = searchIsActive
             if str(searchIsActive).isdigit():
-                lookUp = Q(title__icontains=searchIsActive) | Q(price=searchIsActive) | Q(categories__title__icontains=searchIsActive)
+                lookUp = Q(title__icontains=searchIsActive) | Q(price=searchIsActive) | Q(
+                    categories__title__icontains=searchIsActive)
             else:
                 lookUp = Q(title__icontains=searchIsActive) | Q(categories__title__icontains=searchIsActive)
             getProducts = getProducts.filter(lookUp)
@@ -72,6 +74,7 @@ class products(View):
         rangePriceFilter = f'0-{highsetPriceProduct}'
 
         filterIsActive = request.GET.get('filter') or False
+
         def getListValueFilter(strList):
             # list with string => [name-1,name-2] => number is pk
             if strList:
@@ -117,7 +120,8 @@ class products(View):
 
             # Filter products
             try:
-                getProducts = getProducts.filter(categories__in=filter_categories, productStock__color__in=filter_colors,productStock__count__gt=0,
+                getProducts = getProducts.filter(categories__in=filter_categories,
+                                                 productStock__color__in=filter_colors, productStock__count__gt=0,
                                                  brand__in=filter_brands, price__gte=priceStart, price__lte=priceEnd)
             except:
                 pass
@@ -137,8 +141,8 @@ class products(View):
         except:
             getBrands = getBrands.annotate(filterBrandSelected=Value(True))
 
-        #Order
-        #By default ordered by popularity
+        # Order
+        # By default ordered by popularity
         getProducts = getProducts.distinct()
         orderBy = request.GET.get('orderby') or 'popularity'
         if orderBy == 'popularity':
@@ -153,7 +157,7 @@ class products(View):
 
         # Pagination
         context['countAllProduct'] = len(getProducts)
-        resultProducts , pageActive, pagination = getProductPagination(request, getProducts)
+        resultProducts, pageActive, pagination = getProductPagination(request, getProducts)
 
         # Response
         context['highsetPriceProduct'] = highsetPriceProduct
@@ -170,8 +174,7 @@ class products(View):
         return render(request, self.template_name, context)
 
 
-
-def getProductBySlug(request,slug):
+def getProductBySlug(request, slug):
     try:
         product_id = str(slug).split('-')[-1]
         product = Product.objects.get(product_id=product_id)
@@ -179,40 +182,40 @@ def getProductBySlug(request,slug):
     except:
         raise Http404
 
+
 class product(View):
     template_name = 'Product/index.html'
 
-    def get(self,request,slug):
+    def get(self, request, slug):
         context = {
-            'product':getProductBySlug(request,slug)
+            'product': getProductBySlug(request, slug)
         }
-        return render(request,self.template_name,context)
-
+        return render(request, self.template_name, context)
 
 
 @csrf_exempt
-def getStockProduct(request,slug,id,type):
+def getStockProduct(request, slug, id, type):
     context = {}
-    product = getProductBySlug(request,slug)
+    product = getProductBySlug(request, slug)
     if type == 'color':
-        productStock = ProductStock.objects.filter(product_id=product.id,color_id=id,count__gt=0)
-        productStock = Distinct(ProductStock,productStock, 'size_id')
+        productStock = ProductStock.objects.filter(product_id=product.id, color_id=id, count__gt=0)
+        productStock = Distinct(ProductStock, productStock, 'size_id')
     else:
-        productStock = ProductStock.objects.filter(product_id=product.id,size_id=id,count__gt=0)
-        productStock = Distinct(ProductStock,productStock,'color_id')
+        productStock = ProductStock.objects.filter(product_id=product.id, size_id=id, count__gt=0)
+        productStock = Distinct(ProductStock, productStock, 'color_id')
 
     result = []
     if ListIsNone(productStock) == False:
         for ps in productStock:
             ps_dict = {
-                'productStock_id':ps.id,
-                'count':ps.count,
-                'color':ps.color.name,
-                'color_color':ps.color.color,
-                'color_id':ps.color.id,
-                'size':ps.size.name,
-                'size_id':ps.size.id,
-                'size_title':ps.size.title
+                'productStock_id': ps.id,
+                'count': ps.count,
+                'color': ps.color.name,
+                'color_color': ps.color.color,
+                'color_id': ps.color.id,
+                'size': ps.size.name,
+                'size_id': ps.size.id,
+                'size_title': ps.size.title
             }
             result.append(ps_dict)
         context['result'] = result
@@ -223,13 +226,10 @@ def getStockProduct(request,slug,id,type):
     return JsonResponse(context)
 
 
-
-
-
-def addProductToCart(request,slug):
+def addProductToCart(request, slug):
     if request.method == 'POST':
         data = request.POST
-        product = getProductBySlug(request,slug)
+        product = getProductBySlug(request, slug)
         color = data.get('color')
         size = data.get('size')
         count = data.get('count')
@@ -237,9 +237,8 @@ def addProductToCart(request,slug):
             count = int(count)
             if int(count) < 1:
                 count = 1
-            getStockProduct = ProductStock.objects.filter(product_id=product.id,color_id=color,size_id=size).first()
+            getStockProduct = ProductStock.objects.filter(product_id=product.id, color_id=color, size_id=size).last()
             if getStockProduct != None:
-                cartDetail = CartDetail.objects.create(product_id=product.id,productStock_id=getStockProduct.id,count=count)
                 if request.user.id != None:
                     cart = Cart.objects.filter(user_id=request.user.id).first()
                     if cart == None:
@@ -249,11 +248,70 @@ def addProductToCart(request,slug):
                     cart = Cart.objects.filter(cart_id=getCartID).first()
                     if cart == None:
                         cart = Cart.objects.create()
+
+                cartDetail = CartDetail.objects.filter(product_id=product.id,
+                                                       productStock_id=getStockProduct.id,cart__id=cart.id).first()
+                if cartDetail == None:
+                    cartDetail = CartDetail.objects.create(product_id=product.id, productStock_id=getStockProduct.id,
+                                                           count=count)
+                else:
+                    if getStockProduct.count >= cartDetail.count + count:
+                        cartDetail.count += count
+                    else:
+                        cartDetail.count = getStockProduct.count
+                    cartDetail.save()
                 cart.details.add(cartDetail)
                 res = HttpResponseRedirect(resolve_url('user:cart'))
-                res = Set_Cookie(res,'cartID',cart.cart_id)
+                res = Set_Cookie(res, 'cartID', cart.cart_id)
                 return res
         except:
-            pass
+            raise Http404
     raise PermissionDenied()
+
+
+@csrf_protect
+def addProductToWishList(request, slug):
+    product = getProductBySlug(request, slug)
+    user = request.user
+    if user.id != None:
+        wishList = WishList.objects.filter(user_id=user.id).first()
+        if wishList == None:
+            wishList = WishList.objects.create(user_id=user.id)
+    else:
+        wishlistID = request.COOKIES.get('wishlistID')
+        wishList = WishList.objects.filter(wishlist_id=wishlistID).first()
+        if wishList == None:
+            wishList = WishList.objects.create(user_id=user.id)
+
+    wishDetail = WishDetail.objects.filter(product_id=product.id,wishlist__id=wishList.id).first()
+    if wishDetail == None:
+        wishDetail = WishDetail.objects.create(product_id=product.id)
+
+    wishList.details.add(wishDetail)
+    res = HttpResponseRedirect(resolve_url('user:wishList'))
+    res = Set_Cookie(res, 'wishlistID', wishList.wishlist_id)
+    return res
+
+
+@csrf_exempt
+def removeDetailCart(request):
+    if request.method == 'POST':
+        context = {}
+        try:
+            data = json.loads(request.body)
+            cartID = data.get('cartID') or 0
+            detailID = data.get('detailID') or 0
+            cart = Cart.objects.filter(id=cartID).first()
+            detail = CartDetail.objects.filter(id=detailID, cart__id=cart.id).first()
+            if detail != None:
+                detail.delete()
+                context['status'] = '200'
+                context['newPrice'] = cart.getPrice()
+                context['newCount'] = cart.getDetailsCount()
+            else:
+                context['status'] = '404'
+        except:
+            pass
+        return JsonResponse(context)
+    raise PermissionDenied
 

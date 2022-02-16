@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum , F
 from colorfield.fields import ColorField
 from User.models import User
 from Config.Tools import RandomString
@@ -25,8 +26,14 @@ class Category(models.Model):
     def getTitle(self):
         return self.title.replace(' ', '-')
 
-    def get_absolute_url(self):
+    def getSlug(self):
         return f"{self.getTitle}-{self.id}"
+
+    def get_absolute_url(self):
+        return f"/p/products?filter=true&cats={self.getSlug()}"
+
+    def getProducts(self):
+        return self.product.filter(productStock__count__gt=0).distinct()
 
     def __str__(self):
         return self.title
@@ -232,6 +239,16 @@ class Cart(models.Model):
         super(Cart,self).save(*args,**kwargs)
 
 
+    def getPrice(self):
+        return self.details.all().aggregate(price=Sum(F('count') * F('product__price'),output_field=models.DecimalField(max_digits=12, decimal_places=2)))['price'] or 0
+
+    def getDetails(self):
+        return self.details.all() or None
+
+    def getDetailsCount(self):
+        return self.details.count()
+
+
     def __str__(self):
         if self.user != None:
             return f'{self.user} - Cart'
@@ -245,7 +262,34 @@ class CartDetail(models.Model):
     dateTimeCreated = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        print(self.cart.first())
         if self.cart.first().user != None:
             return f'{self.cart.first().user} - Cart Detail'
         return f'{self.cart.first().cart_id} - Cart Detail'
+
+
+class WishList(models.Model):
+    wishlist_id = models.CharField(max_length=50)
+    user = models.ForeignKey('User.User',on_delete=models.CASCADE,null=True)
+    details = models.ManyToManyField('Product.WishDetail',related_name='wishlist')
+
+    def __str__(self):
+        if self.user != None:
+            return f'{self.user} - WishList'
+        return f'{self.wishlist_id} - WishList'
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self.wishlist_id = RandomString(50)
+        super(WishList, self).save(*args, **kwargs)
+
+class WishDetail(models.Model):
+    product = models.ForeignKey('Product.Product',on_delete=models.CASCADE)
+    dateTimeCreate = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        if self.wishlist.first().user != None:
+            return f'{self.wishlist.first().user} - Wish Detail'
+        return f'{self.wishlist.first().wishlist_id} - Wish Detail'
+
+
