@@ -1,0 +1,151 @@
+{% extends 'Base/BaseTemplate.html' %}
+{% load FilterTags %}
+
+{% block Title %}
+    wish list
+{% endblock %}
+
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+{% endblock %}
+
+{% block Content %}
+    <div class="page-wrapper">
+        {% include 'Base/Header/index.html' %}
+        <main class="main">
+            <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+                <div class="container">
+                    <br>
+                    <br>
+                    <br>
+                    <h1 class="page-title">Wishlist<span>Shop</span></h1>
+                </div><!-- End .container -->
+            </div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'user:dashboard' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+                <div class="container">
+                    {% if wishList.getDetails|ListIsNone == False %}
+                        <table class="table table-wishlist table-mobile">
+                            <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Stock Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for detail in wishList.getDetails %}
+                                {% with product=detail.product %}
+                                    <tr product-wishlist-{{ forloop.counter }}>
+                                        <td class="product-col">
+                                            <div class="product">
+                                                <figure class="product-media">
+                                                    <a href="{{ product.get_absolute_url }}">
+                                                        <img src="{{ product.getImageUrl }}"
+                                                             alt="{{ product.title }}">
+                                                    </a>
+                                                </figure>
+
+                                                <h3 class="product-title">
+                                                    <a href="{{ product.get_absolute_url }}">{{ product.title|truncatechars:30 }}</a>
+                                                </h3><!-- End .product-title -->
+                                            </div><!-- End .product -->
+                                        </td>
+                                        {% if product.productIsStock %}
+                                            <td class="price-col">{{ product.price }}</td>
+                                            <td class="stock-col"><span class="in-stock">In stock</span></td>
+                                            <td class="action-col">
+                                                <a href="{{ product.get_absolute_url }}"
+                                                   class="btn btn-block btn-outline-primary-2">
+                                                    <i class="icon-eye"></i>
+                                                    View product
+                                                </a>
+                                            </td>
+                                        {% else %}
+                                            <td class="price-col">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</td>
+                                            <td class="stock-col"><span class="out-of-stock">Out of stock</span></td>
+                                            <td class="action-col">
+                                                <button class="btn btn-block btn-outline-primary-2 disabled">Out of
+                                                    Stock
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                        <td class="remove-col">
+                                            <button class="btn-remove" wishDetailID="{{ detail.id }}"
+                                                    wishListID="{{ wishList.id }}"
+                                                    btn-remove-product-wishlist="product-wishlist-{{ forloop.counter }}">
+                                                <i
+                                                        class="icon-close"></i></button>
+                                        </td>
+                                    </tr>
+                                {% endwith %}
+
+                            {% endfor %}
+                            </tbody>
+                        </table><!-- End .table table-wishlist -->
+                    {% else %}
+                        <div class="text-center">
+                            <img src="/assets/images/default/product/ImageBoxEmpty.jpg" alt="Empty" class="mx-auto" style="width: 300px;">
+                            <h4>no product</h4>
+                        </div>
+                        <br>
+                    {% endif %}
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    {% include 'Base/Menu/MenuMobile.html' %}
+
+{% endblock %}
+
+{% block Js %}
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+    <script>
+        let btnRemoveProductWishList = document.querySelectorAll('[btn-remove-product-wishlist]')
+        for (let btn of btnRemoveProductWishList) {
+            btn.addEventListener('click', function () {
+                let wishListID = this.getAttribute('wishListID')
+                let wishDetailID = this.getAttribute('wishDetailID')
+                let elementProduct = document.querySelector(`[${this.getAttribute('btn-remove-product-wishlist')}]`)
+                let data = {
+                    'wishListID': wishListID,
+                    'wishDetailID': wishDetailID,
+                }
+                SendAjax('/p/removeDetailWish', data, 'POST', function (response) {
+                    let status = response.status
+                    if (status == '200') {
+                        elementProduct.remove()
+                    } else {
+                        ShowNotificationMessage('Cant remove product , product not found', 'Error')
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}
