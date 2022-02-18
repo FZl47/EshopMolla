@@ -13,6 +13,9 @@ class Home(View):
     template_name = 'Home/index.html'
 
     def get(self,request,*args,**kwargs):
+        context = {}
         products = Product.objects.all()
-        return render(request,self.template_name,{'products':products})
+        context['products'] = products
+        context['products_recent'] = products.filter(productStock__count__gt=0).distinct()
+        return render(request,self.template_name,context)
 
