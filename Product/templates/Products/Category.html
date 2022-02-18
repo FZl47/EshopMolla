@@ -1,10 +1,8 @@
 {% extends 'Base/BaseTemplate.html' %}
 {% load static %}
 
-
-
 {% block Title %}
-    Products - eshopMolla
+    Products - eshopMolla - {{ Category.title }}
 {% endblock %}
 
 {% block Link %}
@@ -34,7 +32,8 @@
                 <div class="container-fluid">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
-                        <li class="breadcrumb-item">Products</li>
+                        <li class="breadcrumb-item"><a href="{% url 'product:products' %}">Products</a></li>
+                        <li class="breadcrumb-item">{{ Category.title }}</li>
                     </ol>
                 </div><!-- End .container-fluid -->
             </nav><!-- End .breadcrumb-nav -->
@@ -113,7 +112,7 @@
                     </div><!-- End .products -->
                     {% include 'Products/pageNavigation.html' %}
                     <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->
-                    {% include 'Products/filterSection.html' %}
+                    {% include 'Products/filterSection.html' with Not='Category' %}
                 </div><!-- End .container-fluid -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->

@@ -39,7 +39,7 @@
                     <div class="ratings-val" style="width: {{ product.getRating }}%;"></div>
                     <!-- End .ratings-val -->
                 </div><!-- End .ratings -->
-                <span class="ratings-text">( 0 Reviews )</span>
+                <span class="ratings-text">( {{ product.getComments.count }} Reviews )</span>
             </div><!-- End .rating-container -->
             <div class="d-flex justify-content-between">
                 <div class="product-nav product-nav-dots">

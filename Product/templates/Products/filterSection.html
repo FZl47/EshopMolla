@@ -4,35 +4,36 @@
             <label><i class="icon-close"></i>Filters</label>
             <a href="#" class="sidebar-filter-clear">Clean All</a>
         </div><!-- End .widget -->
-        <div class="widget widget-collapsible">
-            <h3 class="widget-title">
-                <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true"
-                   aria-controls="widget-1">
-                    Category
-                </a>
-            </h3><!-- End .widget-title -->
-
-            <div class="collapse show" id="widget-1">
-                <div class="widget-body">
-                    <div class="filter-items filter-items-count" id="filter-items-category">
-                        {% for category in categories %}
-                            <div class="filter-item">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" url-filter="{{ category.get_absolute_url }}" {% if category.filterCategorySelected %}
-                                           checked="checked" selected="true" {% endif %}
-                                           class="custom-control-input"
-                                           id="cat-{{ forloop.counter }}">
-                                    <label class="custom-control-label"
-                                           for="cat-{{ forloop.counter }}">{{ category.title }}</label>
-                                </div><!-- End .custom-checkbox -->
-                                <span class="item-count">{{ category.getProducts.count }}</span>
-                            </div><!-- End .filter-item -->
-                        {% endfor %}
-                    </div><!-- End .filter-items -->
-                </div><!-- End .widget-body -->
-            </div><!-- End .collapse -->
-        </div><!-- End .widget -->
-
+        {% if Not != 'Category' %}
+            <div class="widget widget-collapsible">
+                <h3 class="widget-title">
+                    <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true"
+                       aria-controls="widget-1">
+                        Category
+                    </a>
+                </h3><!-- End .widget-title -->
+                <div class="collapse show" id="widget-1">
+                    <div class="widget-body">
+                        <div class="filter-items filter-items-count" id="filter-items-category">
+                            {% for category in categories %}
+                                <div class="filter-item">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" url-filter="{{ category.get_absolute_url }}"
+                                                {% if category.filterCategorySelected %}
+                                               checked="checked" selected="true" {% endif %}
+                                               class="custom-control-input"
+                                               id="cat-{{ forloop.counter }}">
+                                        <label class="custom-control-label"
+                                               for="cat-{{ forloop.counter }}">{{ category.title }}</label>
+                                    </div><!-- End .custom-checkbox -->
+                                    <span class="item-count">{{ category.getProducts.count }}</span>
+                                </div><!-- End .filter-item -->
+                            {% endfor %}
+                        </div><!-- End .filter-items -->
+                    </div><!-- End .widget-body -->
+                </div><!-- End .collapse -->
+            </div><!-- End .widget -->
+        {% endif %}
         <div class="widget widget-collapsible d-none">
             <h3 class="widget-title">
                 <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true"
@@ -104,7 +105,9 @@
                 <div class="widget-body">
                     <div class="filter-colors" id="filter-items-color">
                         {% for color in colors %}
-                            <button title="{{ color.name }}" url-filter="{{ color.get_absolute_url }}" {% if color.filterColorSelected %}selected="true" checked="checked"{% else %}selected="false"{% endif %}
+                            <button title="{{ color.name }}" url-filter="{{ color.get_absolute_url }}"
+                                    {% if color.filterColorSelected %}selected="true" checked="checked"
+                                    {% else %}selected="false"{% endif %}
                                     color-input-filter
                                     style="background: {{ color.color }};"><span
                                     class="sr-only">{{ color.name }}</span></button>
@@ -127,7 +130,8 @@
                         {% for brand in brands %}
                             <div class="filter-item">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" url-filter="{{ brand.get_absolute_url }}" {% if brand.filterBrandSelected %}
+                                    <input type="checkbox" url-filter="{{ brand.get_absolute_url }}"
+                                            {% if brand.filterBrandSelected %}
                                            checked="checked" selected="true" {% endif %}
                                            class="custom-control-input"
                                            id="brand-{{ forloop.counter }}">
@@ -164,6 +168,7 @@
         </div><!-- End .widget -->
     </div><!-- End .sidebar-filter-wrapper -->
     <div class="position-sticky w-100 text-center" style="bottom: 0;left: 0;z-index: 2">
-       <button class="btn w-100 h-100 p-4" id="applyFilters" style="background: #c96;color: #fff">Apply filters</button>
+        <button class="btn w-100 h-100 p-4" id="applyFilters" style="background: #c96;color: #fff">Apply filters
+        </button>
     </div>
 </aside><!-- End .sidebar-filter -->

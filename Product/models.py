@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Sum , F
+from django.db.models import Sum , F , Avg
 from colorfield.fields import ColorField
 from User.models import User
 from Config.Tools import RandomString
@@ -142,10 +142,10 @@ class Product(models.Model):
         return False
 
     def getRating(self):
-        _rating = 2
+        _rating = self.comments.aggregate(avgScores=Avg('score'))['avgScores'] or 0
         #  5 * 20 => 100%
         #  3 * 20 => 60%
-        return _rating * 20   # for get rating by Percentage
+        return _rating * 20 # for get rating by Percentage
 
     def getReviews(self):
         return 2
@@ -166,6 +166,8 @@ class Product(models.Model):
         products = random.sample(list(products),count_select_product)
         return products
 
+    def getComments(self):
+        return Comment.getComments.filter(product_id=self.id).distinct()
 
 
     def __str__(self):
@@ -238,15 +240,16 @@ class Cart(models.Model):
             self.cart_id = RandomString(50)
         super(Cart,self).save(*args,**kwargs)
 
-
+    @property
     def getPrice(self):
-        return self.details.all().aggregate(price=Sum(F('count') * F('product__price'),output_field=models.DecimalField(max_digits=12, decimal_places=2)))['price'] or 0
+        return float(self.details.all().filter(product__status_show='active').aggregate(price=Sum(F('count') * F('product__price'),output_field=models.DecimalField(max_digits=12, decimal_places=2)))['price'] or 0)
+
 
     def getDetails(self):
-        return self.details.all() or None
+        return self.details.all().filter(product__status_show='active')
 
     def getDetailsCount(self):
-        return self.details.count()
+        return self.details.filter(product__status_show='active').count()
 
 
     def __str__(self):
@@ -261,6 +264,12 @@ class CartDetail(models.Model):
     count = models.IntegerField()
     dateTimeCreated = models.DateTimeField(auto_now_add=True)
 
+
+    def getPrice(self):
+        if self.product.status_show == 'active':
+            return self.count * self.product.price
+        return 0
+
     def __str__(self):
         if self.cart.first().user != None:
             return f'{self.cart.first().user} - Cart Detail'
@@ -271,6 +280,10 @@ class WishList(models.Model):
     wishlist_id = models.CharField(max_length=50)
     user = models.ForeignKey('User.User',on_delete=models.CASCADE,null=True)
     details = models.ManyToManyField('Product.WishDetail',related_name='wishlist')
+
+    def getDetails(self):
+        return self.details.all().filter(product__status_show='active')
+
 
     def __str__(self):
         if self.user != None:
@@ -293,3 +306,28 @@ class WishDetail(models.Model):
         return f'{self.wishlist.first().wishlist_id} - Wish Detail'
 
 
+
+
+
+class CommentManagerCustomize(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(checked=True).distinct()
+
+class Comment(models.Model):
+        user = models.ForeignKey('User.User',on_delete=models.CASCADE)
+        product = models.ForeignKey('Product.Product',on_delete=models.CASCADE,related_name='comments')
+        dateTimeCreate = models.DateTimeField(auto_now_add=True)
+        title = models.CharField(max_length=70)
+        message = models.TextField()
+        score = models.IntegerField()
+        checked = models.BooleanField(default=False)
+
+        class Meta:
+            ordering = ['-id']
+
+        objects = models.Manager()
+        getComments = CommentManagerCustomize()
+
+
+        def __str__(self):
+            return f"{self.user.first_name or 'unknown'} - {self.product.title}"
