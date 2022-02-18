@@ -7399,7 +7399,7 @@ p {
 .product:hover .product-action, .product:focus .product-action {
     visibility: visible;
     opacity: 1;
-    transform: translateY(0)
+    /*transform: translateY(0)*/
 }
 
 .action-icon-top {
@@ -15511,15 +15511,15 @@ button:focus {
 }
 
 .table.table-cart .price-col {
-    width: 120px
+    width: 90px
 }
 
 .table.table-cart .total-col {
-    width: 80px
+    width: 70px
 }
 
 .table.table-cart .quantity-col {
-    width: 135px
+    width: 145px;
 }
 
 .cart-product-quantity {
