@@ -58,10 +58,10 @@
                                 </div><!-- End .megamenu megamenu-sm -->
                             </li>
                             <li>
-                                <a href="#" class="sf-with-ul">About us</a>
+                                <a href="{% url 'public:aboutUs' %}" class="sf-with-ul">About us</a>
                             </li>
                             <li>
-                                <a href="#" class="sf-with-ul">Contact us</a>
+                                <a href="{% url 'public:contactUs' %}" class="sf-with-ul">Contact us</a>
                             </li>
                         </ul><!-- End .menu -->
                     </nav><!-- End .main-nav -->
@@ -78,7 +78,7 @@
                         </form>
                     </div><!-- End .header-search -->
 
-                    <a href="wishlist.html" class="wishlist-link">
+                    <a href="{% url 'user:wishList' %}" class="wishlist-link">
                         <i class="icon-heart-o"></i>
                         <span class="wishlist-count">{{ request|getWishListCount }}</span>
                     </a>
@@ -88,11 +88,11 @@
                            aria-haspopup="true"
                            aria-expanded="false" data-display="static">
                             <i class="icon-shopping-cart"></i>
-                            <span class="cart-count" count-buy-1>{{ Cart.getDetailsCount }}</span>
-                            <span class="cart-txt">$ <span price-buy-1 >{{ Cart.getPrice|intcomma }}</span></span>
+                            <span class="cart-count" count-buy-1>{{ request|getCartCount }}</span>
+                            <span class="cart-txt">$ <span price-buy-1 >{{ request|getCartPrice|intcomma }}</span></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            {% if Cart.getDetails != None %}
+                            {% if Cart.getDetails|ListIsNone == False %}
                                 <div class="dropdown-cart-products">
                                     {% for Detail in Cart.getDetails %}
                                         <div class="product" product-{{ forloop.counter }}>
@@ -123,10 +123,10 @@
                                 </div><!-- End .cart-product -->
                                 <div class="dropdown-cart-total">
                                     <span>Total</span>
-                                    <span class="cart-total-price">$ <span price-buy-2>{{ Cart.getPrice|intcomma }}</span></span>
+                                    <span class="cart-total-price">$ <span price-buy-2>{{ request|getCartPrice|intcomma }}</span></span>
                                 </div><!-- End .dropdown-cart-total -->
                                 <div class="dropdown-cart-action">
-                                    <a href="cart.html" class="btn btn-primary">View Cart</a>
+                                    <a href="{% url 'user:cart' %}" class="btn btn-primary">View Cart</a>
                                     <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i
                                             class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .dropdown-cart-total -->
