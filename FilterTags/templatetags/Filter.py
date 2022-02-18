@@ -116,22 +116,31 @@ register = template.Library()
 #     return 'false'
 #
 #
-# @register.filter
-# @register.simple_tag()
-# def ListIsNone(List):
-#     try:
-#         List[0]
-#         return False
-#     except:
-#         return True
+@register.filter
+@register.simple_tag()
+def ListIsNone(List):
+    try:
+        List[0]
+        return False
+    except:
+        return True
 #
-# @register.filter
-# @register.simple_tag()
-# def GetValueInDic(Dic,Key):
-#     try:
-#         return Dic[Key]
-#     except:
-#         return ''
+@register.filter
+@register.simple_tag()
+def GetValueInDic(Dic,Key):
+    try:
+        return Dic[Key]
+    except:
+        return ''
+
+
+@register.filter
+@register.simple_tag()
+def GetAttrObj(obj,attr):
+    try:
+        return getattr(obj,attr)
+    except:
+        return ''
 #
 # @register.filter
 # @register.simple_tag()
@@ -152,7 +161,24 @@ def getCart(request):
     if user.id != None:
         return user.getCart()
     cartID = request.COOKIES.get('cartID') or 0
-    return Cart.objects.filter(cart_id=cartID).first()
+    cart = Cart.objects.filter(cart_id=cartID).first()
+    return cart
+
+@register.filter
+@register.simple_tag()
+def getCartCount(request):
+    cart = getCart(request)
+    if cart:
+        return cart.getDetails().count()
+    return 0
+
+@register.filter
+@register.simple_tag()
+def getCartPrice(request):
+    cart = getCart(request)
+    if cart:
+        return cart.getPrice
+    return 0
 
 
 @register.filter
@@ -162,7 +188,7 @@ def getWishList(request):
     if user.id != None:
         return user.getWishList()
     wishListID = request.COOKIES.get('wishListID') or 0
-    return WishList.objects.filter(wishlist_id=wishListID).first()
+    return WishList.objects.filter(wishlist_id=wishListID,details__product__status_show='active').first()
 
 
 @register.filter
@@ -170,7 +196,7 @@ def getWishList(request):
 def getWishListCount(request):
     wishList = getWishList(request)
     if wishList:
-        return wishList.details.count()
+        return wishList.getDetails().count()
     return 0
 
 
@@ -178,4 +204,10 @@ def getWishListCount(request):
 @register.simple_tag()
 def getCategories(request):
     return Category.objects.all()[:8]
+
+
+@register.filter
+@register.simple_tag()
+def mul(num_1,num_2):
+    return num_1 * num_2
 
