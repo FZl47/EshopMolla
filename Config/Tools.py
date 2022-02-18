@@ -74,12 +74,12 @@ def Set_Cookie(response, key, value, days_expire=7):
     )
     return response
 
-def Set_Cookie_Functionality(Text,Type,Timer='5000',LevelOfNecessity='2',RedirectTo=None):
+def Set_Cookie_Functionality(Text,Type,Timer='7000',LevelOfNecessity='3',RedirectTo=None):
     if RedirectTo == None:
         Res = HttpResponse('<script>setTimeout(()=>{window.history.back();},50);</script>')
     else:
         Res =  HttpResponse(f"<script>location.href='{RedirectTo}';</script>")
-    Set_Cookie(Res,'Functionality_N',f"{ConvertPersianCharToEnglish(Text)}~{Type}~{Timer}~{LevelOfNecessity}",1)
+    Set_Cookie(Res,'Functionality_N',f"{Text}~{Type}~{Timer}~{LevelOfNecessity}",1)
     return Res
 
 
