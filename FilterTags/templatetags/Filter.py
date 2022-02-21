@@ -97,17 +97,7 @@ register = template.Library()
 #         return 'false'
 #     return 'true'
 #
-# @register.filter
-# @register.simple_tag()
-# def NoneVal(ValCheck,ValSet):
-#     if ValCheck == None:
-#         return ValSet
-#     else:
-#         if ValCheck != '' and ValCheck != ' ':
-#             return ValCheck
-#         else:
-#             return ValSet
-#
+
 # @register.filter
 # @register.simple_tag()
 # def ValInList(List,Value):
@@ -116,6 +106,19 @@ register = template.Library()
 #     return 'false'
 #
 #
+
+@register.filter
+@register.simple_tag()
+def NoneVal(ValCheck,ValSet):
+    if ValCheck == None:
+        return ValSet
+    else:
+        if ValCheck != '' and ValCheck != ' ':
+            return ValCheck
+        else:
+            return ValSet
+
+
 @register.filter
 @register.simple_tag()
 def ListIsNone(List):
@@ -187,8 +190,8 @@ def getWishList(request):
     user = request.user
     if user.id != None:
         return user.getWishList()
-    wishListID = request.COOKIES.get('wishListID') or 0
-    return WishList.objects.filter(wishlist_id=wishListID,details__product__status_show='active').first()
+    wishListID = request.COOKIES.get('wishlistID') or 0
+    return WishList.objects.filter(wishlist_id=wishListID).first()
 
 
 @register.filter
