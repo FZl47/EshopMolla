@@ -76,7 +76,7 @@ def Set_Cookie(response, key, value, days_expire=7):
 
 def Set_Cookie_Functionality(Text,Type,Timer='7000',LevelOfNecessity='3',RedirectTo=None):
     if RedirectTo == None:
-        Res = HttpResponse('<script>setTimeout(()=>{window.history.back();},50);</script>')
+        Res = HttpResponse('<script>window.location=document.referrer;</script>')
     else:
         Res =  HttpResponse(f"<script>location.href='{RedirectTo}';</script>")
     Set_Cookie(Res,'Functionality_N',f"{Text}~{Type}~{Timer}~{LevelOfNecessity}",1)
@@ -93,10 +93,9 @@ def GetTimeIran():
 
 def GetDifferenceTime(Time):
     TimeIranZone = pytz.timezone('Asia/Tehran')
-    TimeIranObject = datetime.datetime.now(TimeIranZone)
-    TimeIran = TimeIranObject.now()
-    DifferenceTime = datetime.datetime(TimeIran.year, TimeIran.month, TimeIran.day, TimeIran.hour,
-                                       TimeIran.minute) - datetime.datetime(Time.year, Time.month, Time.day, Time.hour,
+    TimeServer = datetime.datetime.now(TimeIranZone)
+    DifferenceTime = datetime.datetime(TimeServer.year, TimeServer.month, TimeServer.day, TimeServer.hour,
+                                       TimeServer.minute) - datetime.datetime(Time.year, Time.month, Time.day, Time.hour,
                                                                             Time.minute)
     DifferenceTimeSecond = DifferenceTime.seconds
     Second = DifferenceTimeSecond % 60
@@ -105,15 +104,15 @@ def GetDifferenceTime(Time):
     Day = DifferenceTime.days
     Str = ''
     if Minute > 0:
-        Str = f'{Minute} دقیقه پیش'
+        Str = f'{Minute} Minutes'
     else:
-        Str = f'لحظاتی پیش'
+        Str = f'Now'
 
     if Hour > 0:
-        Str = f'{Hour} ساعت پیش'
+        Str = f'{Hour} Hour'
 
     if Day > 0:
-        Str = f'{Day}  روز پیش'
+        Str = f'{Day} Days'
 
     return Str
 

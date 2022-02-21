@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'colorfield',
     'Public',
     'Product',
-    'User'
+    'User',
+    'Transportation',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [
@@ -129,8 +131,8 @@ USE_TZ = True
 STATIC_URL = '/assets/'
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = BASE_DIR.joinpath("static", "static_Root")
-MEDIA_ROOT = BASE_DIR.joinpath("static", "media_Root")
+STATIC_ROOT = BASE_DIR.joinpath("static", "static_root")
+MEDIA_ROOT = BASE_DIR.joinpath("static", "media_root")
 
 STATICFILES_DIRS = [
     BASE_DIR / 'assets'
@@ -141,3 +143,5 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'User.User'
+
+
