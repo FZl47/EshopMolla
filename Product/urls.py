@@ -13,4 +13,5 @@ urlpatterns = [
     path('removeDetailCart',views.removeDetailCart,name='removeDetailCart'),
     path('removeDetailWish',views.removeDetailWish,name='removeDetailWish'),
     path('product/<slug:slug>/addComment', views.addComment, name='addComment'),
+    path('checkCoupon', views.checkCoupon, name='checkCoupon'),
 ]

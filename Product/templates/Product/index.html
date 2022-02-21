@@ -249,7 +249,7 @@
                                 <div class="product-desc-content">
                                     <h3>Product Information</h3>
                                     <p>
-                                        {{ product.description }}
+                                        {{ product.description|safe }}
                                     </p>
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
@@ -258,7 +258,7 @@
                                 <div class="product-desc-content">
                                     <h3>Information</h3>
                                     <p>
-                                        {{ product.information }}
+                                        {{ product.information|safe }}
                                     </p>
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
@@ -335,11 +335,10 @@
                                                             <!-- End .ratings-val -->
                                                         </div><!-- End .ratings -->
                                                     </div><!-- End .rating-container -->
-                                                    <span class="review-date">{{ Comment.dateTimeCreate|timesince }}</span>
+                                                    <span class="review-date" style="font-size: 90%">{{ Comment.getDateTimeCreate }}</span>
                                                 </div><!-- End .col -->
                                                 <div class="col">
                                                     <h4>{{ Comment.title }}</h4>
-
                                                     <div class="review-content">
                                                         <p>{{ Comment.message }}</p>
                                                     </div><!-- End .review-content -->

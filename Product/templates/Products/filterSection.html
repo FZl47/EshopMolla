@@ -18,7 +18,7 @@
                             {% for category in categories %}
                                 <div class="filter-item">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" url-filter="{{ category.get_absolute_url }}"
+                                        <input type="checkbox" url-filter="{{ category.get_absolute_url_filter }}"
                                                 {% if category.filterCategorySelected %}
                                                checked="checked" selected="true" {% endif %}
                                                class="custom-control-input"

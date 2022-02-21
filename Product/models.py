@@ -6,6 +6,8 @@ from Config.Tools import RandomString
 from django.shortcuts import resolve_url
 from django.utils import timezone
 from django.core.validators import MinValueValidator
+from Config.Tools import GetDifferenceTime
+from ckeditor.fields import RichTextField
 import datetime , random
 
 
@@ -29,8 +31,12 @@ class Category(models.Model):
     def getSlug(self):
         return f"{self.getTitle}-{self.id}"
 
-    def get_absolute_url(self):
+    def get_absolute_url_filter(self):
         return f"/p/products?filter=true&cats={self.getSlug()}"
+
+    def get_absolute_url(self):
+        return f"/p/category/{self.title}"
+
 
     def getProducts(self):
         return self.product.filter(productStock__count__gt=0).distinct()
@@ -86,14 +92,13 @@ class Product(models.Model):
     product_id = models.CharField(max_length=20, editable=False)
     type_product = models.ForeignKey('Product.TypeProduct',on_delete=models.CASCADE,related_name='product')
     title = models.CharField(max_length=300)
-    description = models.TextField()
-    information = models.TextField()
+    description = RichTextField(null=True,blank=True)
+    information = RichTextField(null=True,blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     datecreate = models.DateTimeField(auto_now_add=True)
     dateupdate = models.DateTimeField(auto_now=True)
     status_show = models.CharField(max_length=10, choices=STATUS_SHOW, default='active')
     status_available = models.CharField(max_length=20, choices=STATUS_AVAILABLE, default='available')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product')
     images = models.ManyToManyField(to='Product.Image', related_name='product')
     categories = models.ManyToManyField(Category, related_name='product')
     brand = models.ForeignKey(Brand,on_delete=models.SET_NULL,null=True)
@@ -240,6 +245,11 @@ class Cart(models.Model):
             self.cart_id = RandomString(50)
         super(Cart,self).save(*args,**kwargs)
 
+
+    def delete(self, *args, **kwargs):
+        self.details.all().delete()
+        super(Cart, self).delete(*args, **kwargs)
+
     @property
     def getPrice(self):
         return float(self.details.all().filter(product__status_show='active').aggregate(price=Sum(F('count') * F('product__price'),output_field=models.DecimalField(max_digits=12, decimal_places=2)))['price'] or 0)
@@ -271,9 +281,12 @@ class CartDetail(models.Model):
         return 0
 
     def __str__(self):
-        if self.cart.first().user != None:
-            return f'{self.cart.first().user} - Cart Detail'
-        return f'{self.cart.first().cart_id} - Cart Detail'
+        try:
+            if self.cart.first().user != None:
+                return f'{self.cart.first().user} - Cart Detail'
+            return f'{self.cart.first().cart_id} - Cart Detail'
+        except:
+            return 'deleted'
 
 
 class WishList(models.Model):
@@ -295,18 +308,70 @@ class WishList(models.Model):
             self.wishlist_id = RandomString(50)
         super(WishList, self).save(*args, **kwargs)
 
+        def delete(self, *args, **kwargs):
+            self.details.all().delete()
+            super(WishList, self).delete(*args, **kwargs)
+
 class WishDetail(models.Model):
     product = models.ForeignKey('Product.Product',on_delete=models.CASCADE)
     dateTimeCreate = models.DateTimeField(auto_now_add=True)
 
 
     def __str__(self):
-        if self.wishlist.first().user != None:
-            return f'{self.wishlist.first().user} - Wish Detail'
-        return f'{self.wishlist.first().wishlist_id} - Wish Detail'
+        if self.wishlist.first() != None:
+            if self.wishlist.first().user != None:
+                return f'{self.wishlist.first().user} - Wish Detail'
+            return f'{self.wishlist.first().wishlist_id} - Wish Detail'
+        return 'deleted'
 
 
+class Order(models.Model):
+    user = models.ForeignKey('User.User',on_delete=models.CASCADE)
+    dateTimeCreate = models.DateTimeField(auto_now_add=True)
+    dateTimePay = models.DateTimeField(null=True)
+    shipping = models.ForeignKey('Transportation.Shipping',on_delete=models.SET_NULL,null=True)
+    shippingText = models.CharField(max_length=50,null=True)
+    is_pay = models.BooleanField(default=False)
+    withCoupon = models.BooleanField(default=False)
+    couponPrice = models.DecimalField(max_digits=12,decimal_places=2,default=0)
+    coupon = models.ForeignKey('Product.Coupon',on_delete=models.SET_NULL,null=True,blank=True)
+    priceProducts = models.DecimalField(max_digits=50,decimal_places=2,null=True)
+    priceShipping = models.DecimalField(max_digits=12,decimal_places=2,null=True)
+    total = models.DecimalField(max_digits=50,decimal_places=2,null=True)
+    note = models.TextField(null=True)
+    address = models.ForeignKey('Transportation.Address',on_delete=models.SET_NULL,null=True)
+    addressText = models.TextField(null=True)
 
+    def get_absolute_url(self):
+        return resolve_url('user:getOrder',id=self.id)
+
+    def getPrice(self):
+        totalPriceProduct = self.getPriceProducts()
+        return float(totalPriceProduct + self.shipping.price - self.couponPrice)
+
+    def getPriceProducts(self):
+        return self.orderdetail_set.all().aggregate(totalPriceProduct=Sum(F('product__price') * F('count')))['totalPriceProduct']
+
+    def getTimePastPayment(self):
+        return GetDifferenceTime(self.dateTimePay)
+
+    def getDetails(self):
+        return self.orderdetail_set.all()
+
+    def __str__(self):
+        return f'Order - {self.user}'
+
+
+class OrderDetail(models.Model):
+    order = models.ForeignKey('Product.Order',on_delete=models.CASCADE)
+    product = models.ForeignKey('Product.Product',on_delete=models.SET_NULL,null=True)
+    productStock = models.ForeignKey('Product.ProductStock',on_delete=models.SET_NULL,null=True)
+    sizeText = models.CharField(max_length=50,null=True)
+    colorText = models.CharField(max_length=50,null=True)
+    count = models.IntegerField()
+
+    def __str__(self):
+        return f"Order detail - {self.order.user}"
 
 
 class CommentManagerCustomize(models.Manager):
@@ -328,6 +393,40 @@ class Comment(models.Model):
         objects = models.Manager()
         getComments = CommentManagerCustomize()
 
+        def getDateTimeCreate(self):
+            return GetDifferenceTime(self.dateTimeCreate)
+
 
         def __str__(self):
             return f"{self.user.first_name or 'unknown'} - {self.product.title}"
+
+
+
+
+
+class Coupon(models.Model):
+    title = models.CharField(max_length=200)
+    code = models.CharField(max_length=20)
+    count = models.IntegerField()
+    price = models.DecimalField(max_digits=12,decimal_places=2)
+    dateTimeCreate = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    def getPrice(self,price):
+        return int(price) - self.price
+
+
+
+
+
+
+
+
+
+
+
+
+
+

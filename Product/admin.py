@@ -5,7 +5,7 @@ from .models import *
 @admin.register(Product)
 class ProductAdminCustomize(admin.ModelAdmin):
     list_display = ['title','price','datecreate','status_show','status_available']
-    list_filter = ['user','datecreate','status_show','status_available']
+    list_filter = ['datecreate','status_show','status_available']
     search_fields = ['title',]
     ordering = ['-dateupdate']
     list_editable = ['status_show','status_available']
@@ -22,3 +22,6 @@ admin.site.register(TypeProduct)
 admin.site.register(WishList)
 admin.site.register(WishDetail)
 admin.site.register(Comment)
+admin.site.register(Order)
+admin.site.register(OrderDetail)
+admin.site.register(Coupon)

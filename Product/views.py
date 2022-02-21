@@ -384,3 +384,31 @@ def addComment(request,slug):
                 return Set_Cookie_Functionality('Please fill fields comment','Error')
     raise PermissionDenied()
 
+
+
+def checkCoupon(request):
+    if request.method == 'POST' and request.is_ajax():
+        context = {}
+        data = json.loads(request.body)
+        code = data.get('code') or ''
+        coupon = Coupon.objects.filter(code=code).first()
+        orderID = data.get('orderID')
+        order = Order.objects.filter(id=orderID).first()
+        cartID = data.get('cartID')
+        cart = Cart.objects.filter(id=cartID).first()
+        if order != None and cart != None and order.withCoupon == False:
+            if coupon != None and coupon.count > 0 and coupon.price < order.getPrice():
+                price = float(order.shipping.price) + float(cart.getPrice)
+                totalPrice = coupon.getPrice(price)
+                order.withCoupon = True
+                order.couponPrice = coupon.price
+                order.coupon = coupon
+                order.save()
+                coupon.count -= 1
+                coupon.save()
+                context['price'] = totalPrice
+                context['status'] = '200'
+            else:
+                context['status'] = '404'
+            return JsonResponse(context)
+    raise PermissionDenied
