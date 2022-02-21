@@ -1,0 +1,219 @@
+{% extends 'Base/BaseTemplate.html' %}
+{% load FilterTags %}
+{% block Title %}
+    {{ User.getName }} - order
+{% endblock %}
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+    <style>
+        main {
+            min-height: 40vh;
+        }
+
+        .info-order {
+            text-align: left;
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .info-order > div {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            padding: 4px;
+        }
+
+        .title-field {
+            display: inline-block;
+            color: #aaaaaa;
+            width: 45%;
+            text-align: left;
+        }
+
+        .value-field {
+            display: inline-block;
+            color: #c96 !important;
+            font-weight: bolder;
+            width: 45%;
+            text-align: right;
+        }
+
+        .products {
+            margin: 30px auto;
+        }
+
+        .product {
+            margin: 10px 0;
+            text-align: left;
+            background: #fafafa;
+            padding: 8px 4px;
+            border: 1px solid #eee;
+        }
+
+        .product > div{
+            display: inline-block;
+        }
+
+        .product img {
+            width: 40px;
+            height: 40px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .color-bg-product{
+            padding: 5px;
+            border-radius: 5px;
+            color: #000000;
+            font-weight: bolder;
+        }
+
+        .note-order{
+            text-align: justify;
+            margin-left: 30px;
+        }
+
+        @media screen and (max-width: 992px) {
+
+            .product{
+                padding: 0;
+            }
+
+            .product > div{
+                padding: 15px 5px;
+                text-align: center;
+                border-bottom: 1px solid #eee;
+            }
+
+            .product > div:last-of-type{
+                border-bottom: none;
+                text-align: left;
+                margin-left: 15px;
+            }
+
+            .product > div p:last-of-type{
+                color: #c96;
+                font-size: 120%;
+            }
+
+            .note-order{
+                margin-left: 15px;
+            }
+        }
+
+    </style>
+{% endblock %}
+
+{% block Content %}
+
+    <div class="page-wrapper">
+        {% include 'Base/Header/index.html' %}
+        <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <br>
+                <br>
+                <br>
+                <h1 class="page-title">Order<span>Dashboard</span></h1>
+            </div><!-- End .container -->
+        </div>
+        <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'user:dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Order</li>
+                </ol>
+            </div><!-- End .container -->
+        </nav>
+        <br>
+        <main>
+            <div class="text-center col-sm-7 mx-auto">
+                <div class="info-order card">
+                    <div>
+                        <p class="title-field">Time payment</p>
+                        <p class="value-field">{{ Order.getTimePastPayment }}</p>
+                    </div>
+                    <div>
+                        <p class="title-field">With coupon</p>
+                        <p class="value-field">{{ Order.withCoupon|yesno }}</p>
+                    </div>
+                    {% if Order.withCoupon %}
+                        <div>
+                            <p class="title-field">Coupon price</p>
+                            <p class="value-field">{{ Order.CouponPrice }}</p>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <p class="title-field">Shipping</p>
+                        <p class="value-field">{{ Order.shippingText }}</p>
+                    </div>
+                    <div>
+                        <p class="title-field">Shipping price</p>
+                        <p class="value-field">${{ Order.priceShipping }}</p>
+                    </div>
+                    <div>
+                        <p class="title-field">Products price</p>
+                        <p class="value-field">${{ Order.getPriceProducts }}</p>
+                    </div>
+                    <div>
+                        <p class="title-field">Total price</p>
+                        <p class="value-field">${{ Order.getPrice }}</p>
+                    </div>
+                </div>
+                <h4>Products</h4>
+                <div class="products">
+                    {% for detail in Order.getDetails %}
+                        <div class="product">
+                            <div class="col-lg-5">
+                                <a href="{{ detail.product.get_absolute_url }}">
+                                    <img src="{{ detail.product.getImageUrl }}" alt="{{ detail.product.title }}">&nbsp;&nbsp;&nbsp;
+                                    <span>{{ detail.product.title|truncatechars:20 }}</span>
+                                </a>
+                                <b>x{{ detail.count }}</b>
+                            </div>
+                            <div class="col-lg-4">
+                                {{ detail.sizeText }} - <span class="color-bg-product" style="background: {{ detail.productStock.color.color }}">{{ detail.colorText }}</span>
+                            </div>
+                            <div class="col-lg-2">
+                                <p style="font-weight: bolder">${{ detail.product.price }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-3 mb-5">
+                    <h5 class="text-left">Note</h5>
+                    <p class="note-order">
+                        {{ Order.note|NoneVal:'without note' }}
+                    </p>
+                </div>
+                <br>
+                <br>
+                <br>
+            </div>
+        </main>
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    {% include 'Base/Menu/MenuMobile.html' %}
+
+{% endblock %}
+
+{% block Js %}
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+{% endblock %}
+
+
+

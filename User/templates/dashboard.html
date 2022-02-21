@@ -1,0 +1,335 @@
+{% extends 'Base/BaseTemplate.html' %}
+{% load FilterTags %}
+{% block Title %}
+    dashboard - {{ User.getName }}
+{% endblock %}
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+    <style>
+        .nav-link {
+            background: none;
+            border: none;
+            outline: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .address > div {
+            display: inline-block;
+        }
+
+        table{
+            width: 100%;
+            text-align: center;
+        }
+
+        table th{
+            padding: 8px;
+        }
+
+        table td{
+            padding: 10px 5px;
+        }
+
+        table tr:first-of-type{
+            background: #ccb084 !important;
+            color: #fff;
+        }
+
+        table tr:nth-child(odd){
+            background: #fafafa;
+        }
+
+    </style>
+{% endblock %}
+
+{% block Content %}
+
+    <div class="page-wrapper">
+        {% include 'Base/Header/index.html' %}
+
+        <main class="main">
+            <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+                <div class="container">
+                    <br>
+                    <br>
+                    <br>
+                    <h1 class="page-title">My Account<span>Dashboard</span></h1>
+                </div><!-- End .container -->
+            </div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+                <div class="dashboard">
+                    <div class="container">
+                        <div class="row">
+                            <aside class="col-md-4 col-lg-3">
+                                <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab"
+                                           href="#tab-dashboard" role="tab" aria-controls="tab-dashboard"
+                                           aria-selected="true">Dashboard</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders"
+                                           role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'user:cart' %}">Cart</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'user:wishList' %}">Wish list</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address"
+                                           role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account"
+                                           role="tab" aria-controls="tab-account" aria-selected="false">Account
+                                            Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" id="log-out-btn" url-log-out="{% url 'user:logout' %}">
+                                            Sign Out
+                                        </button>
+                                    </li>
+                                </ul>
+                            </aside><!-- End .col-lg-3 -->
+
+                            <div class="col-md-8 col-lg-9">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel"
+                                         aria-labelledby="tab-dashboard-link">
+                                        <p>Hello <span class="font-weight-normal text-dark">{{ User.getName }}</span>
+                                            <br>
+                                            From your account dashboard you can view your <a href="#tab-orders"
+                                                                                             class="tab-trigger-link link-underline">recent
+                                                orders</a>, manage your <a href="#tab-address" class="tab-trigger-link">shipping
+                                                and billing addresses</a>, and <a href="#tab-account"
+                                                                                  class="tab-trigger-link">edit your
+                                                account details</a>.</p>
+                                    </div><!-- .End .tab-pane -->
+
+                                    <div class="tab-pane fade" id="tab-orders" role="tabpanel"
+                                         aria-labelledby="tab-orders-link">
+                                        {% if User.getOrders.exists != False %}
+                                            <table>
+                                            <tr>
+                                                <th>Time submited</th>
+                                                <th>Shipping</th>
+                                                <th>Price</th>
+                                                <th></th>
+                                            </tr>
+                                            {% for Order in User.getOrders %}
+                                                {% if Order.is_pay == True %}
+                                                    <tr>
+                                                        <td>{{ Order.dateTimePay|timeuntil }}</td>
+                                                        <td>{{ Order.shipping }}</td>
+                                                        <td>${{ Order.getPrice }}</td>
+                                                        <td><a href="{{ Order.get_absolute_url }}">More<i class="icon-arrow-right"></i></a></td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </table>
+                                        {% else %}
+                                            <p>No order has been made yet.</p>
+                                            <a href="{% url 'product:products' %}"
+                                               class="btn btn-outline-primary-2"><span>GO SHOP</span><i
+                                                    class="icon-long-arrow-right"></i></a>
+                                        {% endif %}
+                                    </div><!-- .End .tab-pane -->
+
+
+                                    <div class="tab-pane fade" id="tab-address" role="tabpanel"
+                                         aria-labelledby="tab-address-link">
+                                        <p>The following addresses will be used on the checkout page by default.</p>
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card card-dashboard">
+                                                    <div class="card-body">
+                                                        <h3 class="card-title">Your Address <i
+                                                                class="fa fa-map-marker-alt" style="color: #ff5763"></i>
+                                                        </h3>
+                                                        <!-- End .card-title -->
+                                                        <a href="#collapseFormCreateAddress" data-toggle="collapse"
+                                                           role="button"
+                                                           aria-expanded="false"
+                                                           aria-controls="collapseFormCreateAddress">Add address <i
+                                                                class="far fa-plus"></i></a>
+                                                        <div class="collapse bg-white card "
+                                                             id="collapseFormCreateAddress">
+                                                            <br>
+                                                            <h5 class="text-center mb-3" style="color: #aaaaaa">Form Add
+                                                                Address</h5>
+                                                            <form action="{% url 'user:addAddress' %}" method="post"
+                                                                  class="text-center px-5 pb-2 ">
+                                                                {% csrf_token %}
+                                                                <div class="col-sm-5 d-inline-block text-left">
+                                                                    <label>City *</label>
+                                                                    <input type="text" name="city"
+                                                                           class="form-control" minlength="2"
+                                                                           maxlength="25" required>
+                                                                </div><!-- End .col-sm-6 -->
+                                                                <div class="col-sm-5 d-inline-block text-left">
+                                                                    <label>Postal Code *</label>
+                                                                    <input type="number" name="postalCode"
+                                                                           class="form-control" minlength="3"
+                                                                           maxlength="25" required>
+                                                                </div><!-- End .col-sm-6 -->
+                                                                <div class="col-sm-12 text-left">
+                                                                    <label>Address *</label>
+                                                                    <textarea class="form-control" minlength="3"
+                                                                              maxlength="500" required
+                                                                              name="address"></textarea>
+                                                                </div><!-- End .col-sm-6 -->
+                                                                <div class="text-left p-3">
+                                                                    <button class="btn btn-primary">
+                                                                        ADD
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <br>
+                                                        <br>
+                                                        <div class="container-address">
+                                                            {% for Address in User.getAddress %}
+                                                                <div class="address p-3 mb-1 bg-white"
+                                                                     style="border: 1px solid #eeeeee">
+                                                                    <div class="col-lg-2">{{ Address.city }}</div>
+                                                                    <div class="col-lg-2">{{ Address.postalCode }}</div>
+                                                                    <div class="col-lg-6">{{ Address.address|truncatechars:40 }}</div>
+                                                                    <div class="col-lg-1">
+                                                                        <a href="#address_{{ forloop.counter }}"
+                                                                           role="button" data-toggle="collapse"
+                                                                           aria-expanded="false"
+                                                                           aria-controls="address_{{ forloop.counter }}">Edit</a>
+                                                                    </div>
+                                                                    <div class="collapse text-center w-100"
+                                                                         id="address_{{ forloop.counter }}">
+                                                                        <hr>
+                                                                        <form action="{% url 'user:changeAddress' %}"
+                                                                              method="post" class="text-center px-3">
+                                                                            {% csrf_token %}
+                                                                            <input type="hidden" name="addressID"
+                                                                                   value="{{ Address.id }}">
+                                                                            <div class="col-sm-5 d-inline-block text-left">
+                                                                                <label>City *</label>
+                                                                                <input type="text" name="city"
+                                                                                       class="form-control"
+                                                                                       minlength="2"
+                                                                                       maxlength="25" required
+                                                                                       value="{{ Address.city }}">
+                                                                            </div><!-- End .col-sm-6 -->
+                                                                            <div class="col-sm-5 d-inline-block text-left">
+                                                                                <label>Postal Code *</label>
+                                                                                <input type="number" name="postalCode"
+                                                                                       class="form-control"
+                                                                                       minlength="3"
+                                                                                       maxlength="25" required
+                                                                                       value="{{ Address.postalCode }}">
+                                                                            </div><!-- End .col-sm-6 -->
+                                                                            <div class="col-sm-12 text-left">
+                                                                                <label>Address *</label>
+                                                                                <textarea class="form-control"
+                                                                                          minlength="3"
+                                                                                          maxlength="500" required
+                                                                                          name="address">{{ Address.address }}</textarea>
+                                                                            </div><!-- End .col-sm-6 -->
+                                                                            <div class="text-left p-3">
+                                                                                <button class="btn btn-primary">
+                                                                                    CHANGE
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div><!-- End .card-body -->
+                                                </div><!-- End .card-dashboard -->
+                                            </div><!-- End .col-lg-6 -->
+                                        </div><!-- End .row -->
+                                    </div><!-- .End .tab-pane -->
+
+                                    <div class="tab-pane fade" id="tab-account" role="tabpanel"
+                                         aria-labelledby="tab-account-link">
+                                        <form action="{% url 'user:submitInfo' %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <label>First Name *</label>
+                                                    <input type="text" name="first_name" value="{{ User.first_name }}"
+                                                           class="form-control" minlength="3" maxlength="70" required>
+                                                </div><!-- End .col-sm-6 -->
+
+                                                <div class="col-sm-6">
+                                                    <label>Last Name *</label>
+                                                    <input type="text" name="last_name" value="{{ User.last_name }}"
+                                                           class="form-control" minlength="3" maxlength="70" required>
+                                                </div><!-- End .col-sm-6 -->
+                                            </div><!-- End .row -->
+
+                                            <label>Phone Number *</label>
+                                            <input type="text" name="phone_number"
+                                                   value="{{ User.phone_number|default_if_none:'' }}" minlength="11"
+                                                   maxlength="11" class="form-control" required>
+
+                                            <button type="submit" class="btn btn-outline-primary-2">
+                                                <span>SAVE CHANGES</span>
+                                                <i class="icon-long-arrow-right"></i>
+                                            </button>
+                                        </form>
+                                    </div><!-- .End .tab-pane -->
+                                </div>
+                            </div><!-- End .col-lg-9 -->
+                        </div><!-- End .row -->
+                    </div><!-- End .container -->
+                </div><!-- End .dashboard -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    {% include 'Base/Menu/MenuMobile.html' %}
+
+{% endblock %}
+
+{% block Js %}
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+    <script>
+        GetCookieFunctionality_ShowNotification()
+
+        let btnLogout = document.getElementById('log-out-btn')
+        btnLogout.addEventListener('click', function () {
+            let urlLogout = this.getAttribute('url-log-out')
+            CreateMessage_Alert('Are you sure you want log out ?', function () {
+                window.location.href = urlLogout
+            })
+        })
+    </script>
+{% endblock %}
+
+
+

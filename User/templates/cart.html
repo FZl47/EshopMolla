@@ -38,171 +38,157 @@
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
             {% if Cart.getDetails|ListIsNone == False %}
-            <div class="page-content">
-                <div class="cart">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-9">
-                                <table class="table table-cart table-mobile">
-                                    <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Info</th>
-                                        <th>Price</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for detail in Cart.getDetails %}
-                                        <tr product-detail-{{ forloop.counter }}>
-                                            <td class="product-col">
-                                                <div class="product">
-                                                    <figure class="product-media">
-                                                        <a href="{{ detail.product.get_absolute_url }}">
-                                                            <img src="{{ detail.product.getImageUrl }}"
-                                                                 alt="{{ detail.product.title }}">
-                                                        </a>
-                                                    </figure>
-                                                    <h3 class="product-title">
-                                                        <a href="{{ detail.product.get_absolute_url }}">{{ detail.product.title|truncatechars:20 }}</a>
-                                                    </h3><!-- End .product-title -->
-                                                </div><!-- End .product -->
-                                            </td>
-                                            <td class="info-col">
-                                                {{ detail.productStock.size }} -
-                                                <div class="d-inline-block">
+                <div class="page-content">
+                    <div class="cart">
+                        <div class="container">
+                            <form action="{% url 'user:proccedToCheckout' %}" method="post">
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        <table class="table table-cart table-mobile">
+                                            <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Info</th>
+                                                <th>Price</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for detail in Cart.getDetails %}
+                                                <tr product-detail-{{ forloop.counter }}>
+                                                    <td class="product-col">
+                                                        <div class="product">
+                                                            <figure class="product-media">
+                                                                <a href="{{ detail.product.get_absolute_url }}">
+                                                                    <img src="{{ detail.product.getImageUrl }}"
+                                                                         alt="{{ detail.product.title }}">
+                                                                </a>
+                                                            </figure>
+                                                            <h3 class="product-title">
+                                                                <a href="{{ detail.product.get_absolute_url }}">{{ detail.product.title|truncatechars:20 }}</a>
+                                                            </h3><!-- End .product-title -->
+                                                        </div><!-- End .product -->
+                                                    </td>
+                                                    <td class="info-col">
+                                                        {{ detail.productStock.size }} -
+                                                        <div class="d-inline-block">
                                                     <span class="d-inline-block"
                                                           style="background: {{ detail.productStock.color.color }};padding: 5px; ; border-radius: 50%"></span>
-                                                    <span style="font-size: 70%">{{ detail.productStock.color }}</span>
-                                                </div>
-                                            </td>
-                                            <td class="price-col">${{ detail.product.price }}</td>
-                                            <td class="quantity-col">
-                                                <div class="cart-product-quantity">
-                                                    <input type="number" class="form-control"
-                                                           input-quantity="{{ detail.product.price }}"
-                                                           data-element="product-{{ forloop.counter }}"
-                                                           value="{{ detail.count }}" min="1"
-                                                           max="{{ detail.productStock.count }}"
-                                                           step="1" data-decimals="0" required>
-                                                </div><!-- End .cart-product-quantity -->
-                                            </td>
-                                            <td class="total-col" id="product-{{ forloop.counter }}">
-                                                ${{ detail.getPrice }}</td>
-                                            <td class="remove-col">
-                                                <button class="btn-remove" btn-remove-cart-detail="product-detail-{{ forloop.counter }}" cartID="{{ Cart.id }}" detailID="{{ detail.id }}"><i class="icon-close"></i></button>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table><!-- End .table table-wishlist -->
-                                <div class="cart-bottom">
-                                    <div class="cart-discount">
-                                        <form action="#">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" required
-                                                       placeholder="coupon code">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-outline-primary-2" type="submit"><i
-                                                            class="icon-long-arrow-right"></i></button>
-                                                </div><!-- .End .input-group-append -->
-                                            </div><!-- End .input-group -->
-                                        </form>
-                                    </div><!-- End .cart-discount -->
+                                                            <span style="font-size: 70%">{{ detail.productStock.color }}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="price-col">${{ detail.product.price }}</td>
+                                                    <td class="quantity-col">
+                                                        <div class="cart-product-quantity">
+                                                            <input type="number" class="form-control"
+                                                                   input-quantity="{{ detail.product.price }}"
+                                                                   detailID="{{ detail.id }}"
+                                                                   data-element="product-{{ forloop.counter }}"
+                                                                   value="{{ detail.count }}" min="1"
+                                                                   max="{{ detail.productStock.count }}"
+                                                                   step="1" data-decimals="0" required
+                                                                   name="input-product-stock-{{ detail.id }}">
+                                                        </div><!-- End .cart-product-quantity -->
+                                                    </td>
+                                                    <td class="total-col" id="product-{{ forloop.counter }}">
+                                                        ${{ detail.getPrice }}</td>
+                                                    <td class="remove-col">
+                                                        <button class="btn-remove" type="button"
+                                                                btn-remove-cart-detail="product-detail-{{ forloop.counter }}"
+                                                                cartID="{{ Cart.id }}" detailID="{{ detail.id }}"><i
+                                                                class="icon-close"></i></button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table><!-- End .table table-wishlist -->
+                                        <div class="cart-bottom">
+                                            {#                                        <div class="cart-discount">#}
+                                            {#                                            <form action="#">#}
+                                            {#                                                <div class="input-group">#}
+                                            {#                                                    <input type="text" class="form-control" required#}
+                                            {#                                                           placeholder="coupon code">#}
+                                            {#                                                    <div class="input-group-append">#}
+                                            {#                                                        <button class="btn btn-outline-primary-2" type="submit"><i#}
+                                            {#                                                                class="icon-long-arrow-right"></i></button>#}
+                                            {#                                                    </div><!-- .End .input-group-append -->#}
+                                            {#                                                </div><!-- End .input-group -->#}
+                                            {#                                            </form>#}
+                                            {#                                        </div><!-- End .cart-discount -->#}
 
-                                    <a href="{% url 'user:cart' %}"
-                                       class="btn btn-outline-dark-2"><span>UPDATE CART</span><i
-                                            class="icon-refresh"></i></a>
-                                </div><!-- End .cart-bottom -->
-                            </div><!-- End .col-lg-9 -->
-                            <aside class="col-lg-3">
-                                <div class="summary summary-cart">
-                                    <h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
+                                            <a href="{% url 'user:cart' %}"
+                                               class="btn btn-outline-dark-2"><span>UPDATE CART</span><i
+                                                    class="icon-refresh"></i></a>
+                                        </div><!-- End .cart-bottom -->
+                                    </div><!-- End .col-lg-9 -->
+                                    <aside class="col-lg-3">
 
-                                    <table class="table table-summary">
-                                        <tbody>
-                                        <tr class="summary-subtotal">
-                                            <td>Subtotal:</td>
-                                            <td>$<span price-buy-3>{{ Cart.getPrice }}</span></td>
-                                        </tr><!-- End .summary-subtotal -->
-                                        <tr class="summary-shipping">
-                                            <td>Shipping:</td>
-                                            <td>&nbsp;</td>
-                                        </tr>
+                                        {% csrf_token %}
+                                        <div class="summary summary-cart">
+                                            <h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
+                                            <table class="table table-summary">
+                                                <tbody>
+                                                <tr class="summary-subtotal">
+                                                    <td>Subtotal:</td>
+                                                    <td>$<span id="subtotal-cart">{{ Cart.getPrice }}</span>
+                                                    </td>
+                                                </tr><!-- End .summary-subtotal -->
+                                                <tr class="summary-shipping">
+                                                    <td>Shipping:</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                {% for Shipping in Shippings %}
+                                                    <tr class="summary-shipping-row">
+                                                        <td>
+                                                            <div class="custom-control custom-radio">
+                                                                <input type="radio" id="shipping-{{ forloop.counter }}"
+                                                                       input-select-shipping="{{ Shipping.id }}"
+                                                                       price="{{ Shipping.price }}"
+                                                                       value="{{ Shipping.id }}" name="shipping"
+                                                                       class="custom-control-input" required>
+                                                                <label class="custom-control-label"
+                                                                       for="shipping-{{ forloop.counter }}">{{ Shipping.title }}</label>
+                                                            </div><!-- End .custom-control -->
+                                                        </td>
+                                                        <td>${{ Shipping.price }}</td>
+                                                    </tr><!-- End .summary-shipping-row -->
+                                                {% endfor %}
+                                                <tr class="summary-total">
+                                                    <td>Total:</td>
+                                                    <td>$<span id="total-cart">{{ Cart.getPrice }}</span></td>
+                                                </tr><!-- End .summary-total -->
+                                                </tbody>
+                                            </table><!-- End .table table-summary -->
 
-                                        <tr class="summary-shipping-row">
-                                            <td>
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" id="free-shipping" name="shipping"
-                                                           class="custom-control-input">
-                                                    <label class="custom-control-label" for="free-shipping">Free
-                                                        Shipping</label>
-                                                </div><!-- End .custom-control -->
-                                            </td>
-                                            <td>$0.00</td>
-                                        </tr><!-- End .summary-shipping-row -->
+                                            <button
+                                                    class="btn btn-outline-primary-2 btn-order btn-block">PROCEED
+                                                TO CHECKOUT
+                                            </button>
+                                        </div><!-- End .summary -->
 
-                                        <tr class="summary-shipping-row">
-                                            <td>
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" id="standart-shipping" name="shipping"
-                                                           class="custom-control-input">
-                                                    <label class="custom-control-label" for="standart-shipping">Standart:</label>
-                                                </div><!-- End .custom-control -->
-                                            </td>
-                                            <td>$10.00</td>
-                                        </tr><!-- End .summary-shipping-row -->
-
-                                        <tr class="summary-shipping-row">
-                                            <td>
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" id="express-shipping" name="shipping"
-                                                           class="custom-control-input">
-                                                    <label class="custom-control-label"
-                                                           for="express-shipping">Express:</label>
-                                                </div><!-- End .custom-control -->
-                                            </td>
-                                            <td>$20.00</td>
-                                        </tr><!-- End .summary-shipping-row -->
-
-                                        <tr class="summary-shipping-estimate">
-                                            <td>Estimate for Your Country<br> <a href="dashboard.html">Change
-                                                address</a></td>
-                                            <td>&nbsp;</td>
-                                        </tr><!-- End .summary-shipping-estimate -->
-
-                                        <tr class="summary-total">
-                                            <td>Total:</td>
-                                            <td>$160.00</td>
-                                        </tr><!-- End .summary-total -->
-                                        </tbody>
-                                    </table><!-- End .table table-summary -->
-
-                                    <a href="checkout.html" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED
-                                        TO CHECKOUT</a>
-                                </div><!-- End .summary -->
-
-                                <a href="{% url 'product:products' %}"
-                                   class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i
-                                        class="icon-refresh"></i></a>
-                            </aside><!-- End .col-lg-3 -->
-                        </div><!-- End .row -->
-                    </div><!-- End .container -->
-                </div><!-- End .cart -->
-            </div><!-- End .page-content -->
-                {% else %}
-                    <br>
-                    <br>
-                    <div class="text-center my-5 py-5">
-                        <img src="/assets/images/default/product/ImageBoxEmpty.jpg" alt="Empty" class="mx-auto" style="width: 300px">
-                        <h4>no product</h4>
-                    </div>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
+                                        <a href="{% url 'product:products' %}"
+                                           class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i
+                                                class="icon-refresh"></i></a>
+                                    </aside><!-- End .col-lg-3 -->
+                                </div><!-- End .row -->
+                            </form>
+                        </div><!-- End .container -->
+                    </div><!-- End .cart -->
+                </div><!-- End .page-content -->
+            {% else %}
+                <br>
+                <br>
+                <div class="text-center my-5 py-5">
+                    <img src="/assets/images/default/product/ImageBoxEmpty.jpg" alt="Empty" class="mx-auto"
+                         style="width: 300px">
+                    <h4>no product</h4>
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
             {% endif %}
         </main><!-- End .main -->
 
@@ -210,7 +196,7 @@
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
-   {% include 'Base/Menu/MenuMobile.html' %}
+    {% include 'Base/Menu/MenuMobile.html' %}
 
 
 {% endblock %}
@@ -227,7 +213,22 @@
     <!-- Main JS File -->
     <script src="/assets/js/main.js"></script>
     <script>
+        let priceInfo = {
+            'products': {},
+            'shipping': 0
+        }
+        {% for detail in Cart.getDetails %}
+            priceInfo.products[`{{ detail.id }}`] = {
+                'price': '{{ detail.getPrice }}'
+            }
+        {% endfor %}
 
+
+    </script>
+    <script>
+        GetCookieFunctionality_ShowNotification()
+        let subTotalCart = document.getElementById('subtotal-cart')
+        let totalCart = document.getElementById('total-cart')
         let inputsQuantity = document.querySelectorAll('[input-quantity]')
         for (let input of inputsQuantity) {
             input.addEventListener('input', function () {
@@ -235,13 +236,70 @@
                 let elementTotal = document.getElementById(dataElement)
                 let price = this.getAttribute('input-quantity')
                 let count = this.value
-                let total = `$${parseFloat(price) * parseFloat(count)}`
+                let detailID = this.getAttribute('detailID')
+                let total = `${parseFloat(price) * parseFloat(count)}`
                 if (total.split('.')[1] == undefined) {
                     total += '.00'
                 }
-                elementTotal.innerText = total
+                let result = `$${total}`
+                elementTotal.innerText = result
+                priceInfo.products[detailID].price = total
+                updateElementSubTotalCart()
+                updateElementTotalCart()
             })
         }
+
+
+        let btnRemoveProduct = document.querySelectorAll('[btn-remove-cart-detail]')
+        for (let btn of btnRemoveProduct) {
+            btn.addEventListener('click', function () {
+                setTimeout(function () {
+                    let detailID = btn.getAttribute('detailID')
+                    delete priceInfo.products[detailID]
+                    updateElementSubTotalCart()
+                    updateElementTotalCart()
+                })
+            })
+        }
+
+        let inputSelectShipping = document.querySelectorAll('[input-select-shipping]')
+        for (let input of inputSelectShipping) {
+            input.addEventListener('input', function () {
+                let idShipping = this.getAttribute('input-select-shipping')
+                let price = this.getAttribute('price')
+                priceInfo.shipping = parseFloat(price)
+                updateElementTotalCart()
+            })
+        }
+
+        function updatePriceCart(withShipping = false) {
+            let total = 0
+            for (let product of Object.values(priceInfo.products)) {
+                total += parseFloat(product.price)
+            }
+            if (withShipping) {
+                total += priceInfo.shipping
+            }
+            return total
+        }
+
+        function updateElementSubTotalCart() {
+            let price = String(updatePriceCart())
+            if (price.split('.')[1] == undefined) {
+                price += '.0'
+            }
+            subTotalCart.innerText = price
+        }
+
+        function updateElementTotalCart() {
+            let price = String(updatePriceCart(true))
+            if (price.split('.')[1] == undefined) {
+                price += '.0'
+            }
+            totalCart.innerText = price
+        }
+
+
     </script>
 {% endblock %}
 
