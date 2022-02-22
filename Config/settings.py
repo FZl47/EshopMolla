@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'Product',
     'User',
     'Transportation',
-    'ckeditor'
+    'ckeditor',
+    'Blog'
 ]
 
 MIDDLEWARE = [

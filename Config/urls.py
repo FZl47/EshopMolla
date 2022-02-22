@@ -24,8 +24,12 @@ urlpatterns = [
     path('', include('Public.urls',namespace='public')),
     path('p/', include('Product.urls',namespace='product')),
     path('u/', include('User.urls',namespace='user')),
+    path('b/', include('Blog.urls',namespace='blog')),
     path('admin/', admin.site.urls),
 ]
+
+handler404  = 'Public.views.err_404'
+handler500  = 'Public.views.err_500'
 
 
 if settings.DEBUG:
