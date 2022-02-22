@@ -136,7 +136,7 @@
                                             {% for Order in User.getOrders %}
                                                 {% if Order.is_pay == True %}
                                                     <tr>
-                                                        <td>{{ Order.dateTimePay|timeuntil }}</td>
+                                                        <td>{{ Order.dateTimePay|timesince }}</td>
                                                         <td>{{ Order.shipping }}</td>
                                                         <td>${{ Order.getPrice }}</td>
                                                         <td><a href="{{ Order.get_absolute_url }}">More<i class="icon-arrow-right"></i></a></td>
