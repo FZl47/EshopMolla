@@ -1,0 +1,66 @@
+{% extends 'Base/BaseTemplate.html' %}
+
+{% block Title %}
+    Molla - Page not found - 404
+{% endblock %}
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+{% endblock %}
+
+
+{% block Content %}
+    <div class="page-wrapper">
+        {% include 'Base/Header/index.html' %}
+
+        <main class="main">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                <div class="container">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">404</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="error-content text-center"
+                 style="background-image: url('/assets/images/backgrounds/cta/bg-5.jpg')">
+                <div class="container">
+                    <h1 class="error-title">Error 404</h1><!-- End .error-title -->
+                    <p>We are sorry, the page you've requested is not available.</p>
+                    <a href="{% url 'public:home' %}" class="btn btn-outline-primary-2 btn-minwidth-lg">
+                        <span>BACK TO HOMEPAGE</span>
+                        <i class="icon-long-arrow-right"></i>
+                    </a>
+                </div><!-- End .container -->
+            </div><!-- End .error-content text-center -->
+        </main><!-- End .main -->
+
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+    {% include 'Base/Menu/MenuMobile.html' %}
+
+
+{% endblock %}
+
+{% block Js %}
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+{% endblock %}

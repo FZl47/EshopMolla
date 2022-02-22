@@ -1,0 +1,185 @@
+{% extends 'Base/BaseTemplate.html' %}
+
+{% block Title %}
+    Molla - About us
+{% endblock %}
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/plugins/owl-carousel/owl.carousel.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+    <style>
+        pre{
+            word-wrap: normal;
+            white-space: pre-wrap;
+            font-family: 'Poppins';
+
+        }
+    </style>
+{% endblock %}
+
+
+{% block Content %}
+    <div class="page-wrapper">
+        {% include 'Base/Header/index.html' %}
+
+        <main class="main">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">About us</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+            <div class="container">
+                <div class="page-header page-header-big text-center"
+                     style="background-image: url('/assets/images/about-header-bg.jpg')">
+                    <h1 class="page-title text-white">About us<span class="text-white">Who we are</span></h1>
+                </div><!-- End .page-header -->
+            </div><!-- End .container -->
+
+            <div class="page-content pb-0">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 mb-3 mb-lg-0">
+                            <h2 class="title">Our Vision</h2><!-- End .title -->
+                            <div>{{ SiteInfo.our_vision|safe }}</div>
+                        </div><!-- End .col-lg-6 -->
+
+                        <div class="col-lg-6">
+                            <h2 class="title">Our Mission</h2><!-- End .title -->
+                            <div>{{ SiteInfo.our_vision|safe }}</div>
+                        </div><!-- End .col-lg-6 -->
+                    </div><!-- End .row -->
+
+                    <div class="mb-5"></div><!-- End .mb-4 -->
+                </div><!-- End .container -->
+
+                <div class="bg-light-2 pt-6 pb-5 mb-6 mb-lg-8">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-5 mb-3 mb-lg-0">
+                                <h2 class="title">Who We Are</h2><!-- End .title -->
+                                <div>
+                                    {{ SiteInfo.who_we_are|safe }}
+                                </div>
+                                <a href="{% url 'blog:blogs' %}" class="btn btn-sm btn-minwidth btn-outline-primary-2">
+                                    <span>VIEW OUR NEWS</span>
+                                    <i class="icon-long-arrow-right"></i>
+                                </a>
+                            </div><!-- End .col-lg-5 -->
+
+                            <div class="col-lg-6 offset-lg-1">
+                                <div class="about-images">
+                                    <img src="/assets/images/about/img-1.jpg" alt="" class="about-img-front">
+                                    <img src="/assets/images/about/img-2.jpg" alt="" class="about-img-back">
+                                </div><!-- End .about-images -->
+                            </div><!-- End .col-lg-6 -->
+                        </div><!-- End .row -->
+                    </div><!-- End .container -->
+                </div><!-- End .bg-light-2 pt-6 pb-6 -->
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="brands-text">
+                                <h2 class="title">The world's premium design brands in one destination.</h2>
+                                <!-- End .title -->
+                                <p>Phasellus hendrerit. Pellentesque aliquet nibh nec urna. In nisi neque, aliquet vel,
+                                    dapibus id, mattis vel, nis</p>
+                            </div><!-- End .brands-text -->
+                        </div><!-- End .col-lg-5 -->
+                        <div class="col-lg-7">
+                            <div class="brands-display">
+                                <div class="row justify-content-center">
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/1.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/2.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/3.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/4.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/5.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/6.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/7.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/8.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+
+                                    <div class="col-6 col-sm-4">
+                                        <a href="#" class="brand">
+                                            <img src="/assets/images/brands/9.png" alt="Brand Name">
+                                        </a>
+                                    </div><!-- End .col-sm-4 -->
+                                </div><!-- End .row -->
+                            </div><!-- End .brands-display -->
+                        </div><!-- End .col-lg-7 -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+    {% include 'Base/Menu/MenuMobile.html' %}
+
+{% endblock %}
+
+{% block Js %}
+
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+
+{% endblock %}
+

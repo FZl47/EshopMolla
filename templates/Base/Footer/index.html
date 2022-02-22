@@ -1,29 +1,26 @@
+{% load FilterTags %}
+{% with SiteInfo=request|getInfoSite %}
+    <style>
+        pre{
+            white-space: pre-wrap;
+        }
+    </style>
 <footer class="footer footer-2">
     <div class="footer-middle">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row d-flex justify-content-between">
                 <div class="col-sm-12 col-lg-4">
                     <div class="widget widget-about">
                         <img src="/assets/images/logo.png" class="footer-logo" alt="Footer Logo" width="105"
                              height="25">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad adipisci assumenda autem earum
-                            facere, fugit, incidunt nulla, officia optio praesentium quidem sapiente sunt tempore
-                            temporibus totam? A asperiores doloremque eligendi molestiae perspiciatis sit tempore!
-                            Eligendi.
-                        </p>
-
+                        <div>
+                            {{ SiteInfo.who_we_are|safe }}
+                        </div>
                         <div class="widget-about-info">
                             <div class="row">
                                 <div class="col-sm-6 col-md-4">
-                                    <span class="widget-about-title">Got Question? Call us 24/7</span>
-                                    <a href="tel:123456789">+0123 456 789</a>
-                                </div><!-- End .col-sm-6 -->
-                                <div class="col-sm-6 col-md-8">
-                                    <span class="widget-about-title">Payment Method</span>
-                                    <figure class="footer-payments">
-                                        <img src="/assets/images/payments.png" alt="Payment methods" width="272"
-                                             height="20">
-                                    </figure><!-- End .footer-payments -->
+                                    <span class="widget-about-title">Got Question? Call us</span>
+                                    <a href="tel:{{ SiteInfo.phone_number }}">{{ SiteInfo.phone_number }}</a>
                                 </div><!-- End .col-sm-6 -->
                             </div><!-- End .row -->
                         </div><!-- End .widget-about-info -->
@@ -34,26 +31,23 @@
                     <div class="widget">
                         <h4 class="widget-title">Information</h4><!-- End .widget-title -->
                         <ul class="widget-list">
-                            <li><a href="about.html">About Molla</a></li>
-                            <li><a href="#">How to shop on Molla</a></li>
-                            <li><a href="faq.html">FAQ</a></li>
-                            <li><a href="contact.html">Contact us</a></li>
-                            <li><a href="login.html">Log in</a></li>
+                            <li><a href="{% url 'Public:aboutUs' %}">About Molla</a></li>
+                            <li><a href="{% url 'public:FAQ' %}">FAQ</a></li>
+                            <li><a href="{% url 'public:contactUs' %}">Contact us</a></li>
+                            <li><a href="{% url 'user:login_register' %}">Log in</a></li>
                         </ul><!-- End .widget-list -->
                     </div><!-- End .widget -->
                 </div><!-- End .col-sm-4 col-lg-2 -->
 
+
                 <div class="col-sm-4 col-lg-2">
                     <div class="widget">
-                        <h4 class="widget-title">Customer Service</h4><!-- End .widget-title -->
-
+                        <h4 class="widget-title">Products</h4><!-- End .widget-title -->
                         <ul class="widget-list">
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Money-back guarantee!</a></li>
-                            <li><a href="#">Returns</a></li>
-                            <li><a href="#">Shipping</a></li>
-                            <li><a href="#">Terms and conditions</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="{% url 'product:products' %}">Products</a></li>
+                            <li><a href="{% url 'product:category' title='Accessories' %}">Accessories</a></li>
+                            <li><a href="{% url 'product:category' title='Bag' %}">Bags by Mood</a></li>
+                            <li><a href="{% url 'product:products' %}?orderby=popularity">This Week's Most Wanted</a></li>
                         </ul><!-- End .widget-list -->
                     </div><!-- End .widget -->
                 </div><!-- End .col-sm-4 col-lg-2 -->
@@ -61,43 +55,22 @@
                 <div class="col-sm-4 col-lg-2">
                     <div class="widget">
                         <h4 class="widget-title">My Account</h4><!-- End .widget-title -->
-
                         <ul class="widget-list">
-                            <li><a href="#">Sign In</a></li>
-                            <li><a href="cart.html">View Cart</a></li>
-                            <li><a href="#">My Wishlist</a></li>
-                            <li><a href="#">Track My Order</a></li>
-                            <li><a href="#">Help</a></li>
+                            <li><a href="{% url 'user:dashboard' %}">Dashboard</a></li>
+                            <li><a href="{% url 'user:cart' %}">View Cart</a></li>
+                            <li><a href="{% url 'user:wishList' %}">My Wishlist</a></li>
+                            <li><a href="{% url 'user:login_register' %}">Sign In</a></li>
                         </ul><!-- End .widget-list -->
                     </div><!-- End .widget -->
                 </div><!-- End .col-sm-4 col-lg-2 -->
 
-                <div class="col-sm-6 col-lg-2">
-                    <div class="widget widget-newsletter">
-                        <h4 class="widget-title">Newsletter</h4><!-- End .widget-title -->
-
-                        <p>Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan.</p>
-
-                        <form action="#">
-                            <div class="input-group">
-                                <input type="email" class="form-control" placeholder="Enter your Email Address"
-                                       aria-label="Email Adress" required>
-                                <div class="input-group-append">
-                                    <button class="btn btn-dark" type="submit"><i
-                                            class="icon-long-arrow-right"></i>
-                                    </button>
-                                </div><!-- .End .input-group-append -->
-                            </div><!-- .End .input-group -->
-                        </form>
-                    </div><!-- End .widget -->
-                </div><!-- End .col-sm-6 col-lg-2 -->
             </div><!-- End .row -->
         </div><!-- End .container-fluid -->
     </div><!-- End .footer-middle -->
 
     <div class="footer-bottom">
         <div class="container-fluid">
-            <p class="footer-copyright">Copyright © 2022 <a href="http://fazelmomeni.codevar.ir" style="color: #c96"><b>Fazel Momeni</b></a></p>
+            <p class="footer-copyright">Copyright © 2022 <a href="http://fazelmomeni.codevar.ir" style="color: #c96"><b>&nbsp;Fazel Momeni</b></a></p>
             <!-- End .footer-copyright -->
             <ul class="footer-menu">
 {#                <li><a href="#">Terms Of Use</a></li>#}
@@ -119,3 +92,5 @@
         </div><!-- End .container-fluid -->
     </div><!-- End .footer-bottom -->
 </footer><!-- End .footer -->
+
+{% endwith %}

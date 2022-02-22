@@ -1,0 +1,118 @@
+{% extends 'Base/BaseTemplate.html' %}
+
+{% block Title %}
+    Molla - FAQ
+{% endblock %}
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+    <style>
+
+        [aria-expanded="false"]{
+            color: #555555!important;
+        }
+        [aria-expanded="false"]:hover{
+            color: #c96!important;
+        }
+    </style>
+{% endblock %}
+
+{% block Content %}
+    <div class="page-wrapper">
+        {% include 'Base/Header/index.html' %}
+
+        <main class="main">
+            <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+                <div class="container">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <h1 class="page-title">F.A.Q<span>Support</span></h1>
+                </div><!-- End .container -->
+            </div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">FAQ</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+                <div class="container">
+                    {% for FaqCategory in FaqCategories %}
+                        <h2 class="title text-center mb-3">{{ FaqCategory.title }}</h2><!-- End .title -->
+                        <div class="accordion accordion-rounded" id="accordion-{{ forloop.counter }}">
+                            {% for Faq in FaqCategory.getFaqs %}
+                                <div class="card card-box card-sm bg-light">
+                                    <div class="card-header" id="heading-{{ forloop.counter }}{{ forloop.parentloop.counter }}">
+                                        <h2 class="card-title">
+                                            <a role="button" data-toggle="collapse" href="#collapse-{{ forloop.counter }}{{ forloop.parentloop.counter }}"
+                                               aria-expanded="false"
+                                               aria-controls="collapse-{{ forloop.counter }}{{ forloop.parentloop.counter }}">
+                                                {{ Faq.question }}
+                                            </a>
+                                        </h2>
+                                    </div><!-- End .card-header -->
+                                    <div id="collapse-{{ forloop.counter }}{{ forloop.parentloop.counter }}" class="collapse" aria-labelledby="heading-{{ forloop.counter }}{{ forloop.parentloop.counter }}"
+                                         data-parent="#accordion-{{ forloop.parentloop.counter }}">
+                                        <div class="card-body">
+                                            {{ Faq.answer }}
+                                        </div><!-- End .card-body -->
+                                    </div><!-- End .collapse -->
+                                </div><!-- End .card -->
+                            {% endfor %}
+                        </div><!-- End .accordion -->
+                    {% endfor %}
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+
+            <div class="cta cta-display bg-image pt-4 pb-4"
+                 style="background-image: url('/assets/images/backgrounds/cta/bg-7.jpg');">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10 col-lg-9 col-xl-7">
+                            <div class="row no-gutters flex-column flex-sm-row align-items-sm-center">
+                                <div class="col">
+                                    <h3 class="cta-title text-white">If You Have More Questions</h3>
+                                    <!-- End .cta-title -->
+                                    <p class="cta-desc text-white">Quisque volutpat mattis eros</p>
+                                    <!-- End .cta-desc -->
+                                </div><!-- End .col -->
+
+                                <div class="col-auto">
+                                    <a href="{% url 'public:contactUs' %}" class="btn btn-outline-white"><span>CONTACT US</span><i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .col-auto -->
+                            </div><!-- End .row no-gutters -->
+                        </div><!-- End .col-md-10 col-lg-9 -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .cta -->
+        </main><!-- End .main -->
+
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+{% endblock %}
+
+{% include 'Base/Menu/MenuMobile.html' %}
+
+{% block Js %}
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+{% endblock %}

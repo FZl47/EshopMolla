@@ -1,0 +1,171 @@
+{% extends 'Base/BaseTemplate.html' %}
+
+{% block Title %}
+    Molla - Contact us
+{% endblock %}
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+
+{% endblock %}
+
+
+{% block Content %}
+    <div class="page-wrapper">
+        {% include 'Base/Header/index.html' %}
+
+        <main class="main">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                <div class="container">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Contact us</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+            <div class="container">
+                <div class="page-header page-header-big text-center"
+                     style="background-image: url('/assets/images/contact-header-bg.jpg')">
+                    <h1 class="page-title text-white">Contact us<span class="text-white">keep in touch with us</span>
+                    </h1>
+                </div><!-- End .page-header -->
+            </div><!-- End .container -->
+
+            <div class="page-content pb-0">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 mb-2 mb-lg-0">
+                            <h2 class="title mb-1">Contact Information</h2><!-- End .title mb-2 -->
+                            <p class="mb-3">{{ SiteInfo.contact_information|safe }}</p>
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <div class="contact-info">
+                                        <h3>The Office</h3>
+
+                                        <ul class="contact-list">
+                                            <li>
+                                                <i class="icon-map-marker"></i>
+                                                {{ SiteInfo.address_office }}
+                                            </li>
+                                            <li>
+                                                <i class="icon-phone"></i>
+                                                <a href="tel:#">{{ SiteInfo.phone_number }}</a>
+                                            </li>
+                                            <li>
+                                                <i class="icon-envelope"></i>
+                                                <a href="mailto:#">{{ SiteInfo.email }}</a>
+                                            </li>
+                                        </ul><!-- End .contact-list -->
+                                    </div><!-- End .contact-info -->
+                                </div><!-- End .col-sm-7 -->
+                            </div><!-- End .row -->
+                        </div><!-- End .col-lg-6 -->
+                        <div class="col-lg-6">
+                            <h2 class="title mb-1">Got Any Questions?</h2><!-- End .title mb-2 -->
+                            <p class="mb-2">Use the form below to get in touch with the sales team</p>
+
+                            <form action="{% url 'public:submitCommentContactSupport' %}" class="contact-form mb-3" method="post">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label for="cname" class="sr-only">Name</label>
+                                        <input type="text" class="form-control" id="cname" name="name" minlength="3" maxlength="100" placeholder="Name *"
+                                               required>
+                                    </div><!-- End .col-sm-6 -->
+
+                                    <div class="col-sm-6">
+                                        <label for="cemail" class="sr-only">Email</label>
+                                        <input type="email" class="form-control" id="cemail" name="email" minlength="3" maxlength="100" placeholder="Email *"
+                                               required>
+                                    </div><!-- End .col-sm-6 -->
+                                </div><!-- End .row -->
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label for="cphone" class="sr-only">Phone</label>
+                                        <input type="number" class="form-control" id="cphone" name="phone" minlength="12" maxlength="15"  placeholder="Phone">
+                                    </div><!-- End .col-sm-6 -->
+
+                                    <div class="col-sm-6">
+                                        <label for="csubject" class="sr-only">Subject</label>
+                                        <input type="text" class="form-control" id="csubject" name="subject" minlength="5" maxlength="100" placeholder="Subject">
+                                    </div><!-- End .col-sm-6 -->
+                                </div><!-- End .row -->
+
+                                <label for="cmessage" class="sr-only">Message</label>
+                                <textarea class="form-control" name="message" minlength="3" maxlength="1000" cols="30" rows="4" id="cmessage" required
+                                          placeholder="Message *"></textarea>
+
+                                <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                    <span>SUBMIT</span>
+                                    <i class="icon-long-arrow-right"></i>
+                                </button>
+                            </form><!-- End .contact-form -->
+                        </div><!-- End .col-lg-6 -->
+                    </div><!-- End .row -->
+
+                    <hr class="mt-4 mb-5">
+
+                    <div class="stores mb-4 mb-lg-5">
+                        <h2 class="title text-center mb-3">Our Stores</h2><!-- End .title text-center mb-2 -->
+                        <div class="row">
+                            {% for outStor in outStors %}
+                                <div class="col-lg-6">
+                                    <div class="store">
+                                        <div class="row">
+                                            <div class="col-sm-5 col-xl-6">
+                                                <figure class="store-media mb-2 mb-lg-0">
+                                                    <img src="{{ outStor.image.url }}" alt="{{ outStor.title }}">
+                                                </figure><!-- End .store-media -->
+                                            </div><!-- End .col-xl-6 -->
+                                            <div class="col-sm-7 col-xl-6">
+                                                <div class="store-content">
+                                                    <h3 class="store-title">{{ outStor.title }}</h3>
+                                                    <!-- End .store-title -->
+                                                    <address>{{ outStor.address }}</address>
+                                                    <div><a href="tel:#">{{ outStor.phone_number }}</a></div>
+                                                    <h4 class="store-subtitle">Store Hours:</h4>
+                                                    <!-- End .store-subtitle -->
+                                                    <div>{{ outStor.store_hour }}</div>
+                                                </div><!-- End .store-content -->
+                                            </div><!-- End .col-xl-6 -->
+                                        </div><!-- End .row -->
+                                    </div><!-- End .store -->
+                                </div><!-- End .col-lg-6 -->
+                            {% endfor %}
+                            <br>
+                            <br>
+                        </div><!-- End .row -->
+                    </div><!-- End .stores -->
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    {% include 'Base/Menu/MenuMobile.html' %}
+{% endblock %}
+
+{% block Js %}
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+    <script>
+        GetCookieFunctionality_ShowNotification()
+    </script>
+{% endblock %}
