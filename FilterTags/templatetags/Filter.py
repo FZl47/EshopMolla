@@ -1,6 +1,7 @@
 # {% load FilterTags %} For Use => Set This in Template
 from django import template
 from Product.models import Cart  , WishList , Category
+from Public.models import SiteInfo
 import math
 
 register = template.Library()
@@ -106,6 +107,12 @@ register = template.Library()
 #     return 'false'
 #
 #
+
+@register.filter
+@register.simple_tag()
+def getInfoSite(request):
+    return SiteInfo.objects.first()
+
 
 @register.filter
 @register.simple_tag()
