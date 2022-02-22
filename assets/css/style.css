@@ -15789,7 +15789,8 @@ button:focus {
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    min-height: 480px;
+    min-height: 400px!important;
+    margin-bottom: 50px!important;
     background-color: #fdfdfd
 }
 
