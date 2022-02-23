@@ -11721,7 +11721,7 @@ button:focus {
 .color-product {
     position: relative;
     outline: none;
-    border: 1px solid rgba(238, 238, 238, 0.1);
+    border: 1px solid rgba(238, 238, 238, 0.9);
     padding: 9px;
     margin: 3px;
     border-radius: 50%;

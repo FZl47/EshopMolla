@@ -1,6 +1,4 @@
 from django.contrib import admin
 from .models import Shipping , Address
 
-
 admin.site.register(Shipping)
-admin.site.register(Address)

@@ -178,6 +178,9 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    def __str_small__(self):
+        return f"{self.title[:20]}..."
+
     def save(self, *args, **kwargs):
         if self.pk is None:
             self.product_id = RandomString()
@@ -399,8 +402,6 @@ class Comment(models.Model):
 
         def __str__(self):
             return f"{self.user.first_name or 'unknown'} - {self.product.title}"
-
-
 
 
 

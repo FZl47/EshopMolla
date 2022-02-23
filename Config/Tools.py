@@ -189,8 +189,9 @@ def ValidationText(Text, Bigger=None, Less=None, NoSpace=False, En=False):
         if bool(re.match('[a-zA-Z0-9]+$', Text)) == False:
             State = False
 
-    if '<script>' in Text.strip():
-        State = False
+    if Text:
+        if '<script>' in Text.strip():
+            State = False
 
     return State
 

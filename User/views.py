@@ -94,8 +94,14 @@ def proccedToPayment(request):
             address = Address.objects.filter(id=address,user_id=request.user.id).first()
             if address != None:
                 if orderActive != None:
-                    status = 200  # payment
+                    status = 200  # payment proccess
                     if status == 200:
+                        for detail in orderActive.getDetails():
+                            if detail.productStock.count >= detail.count:
+                                detail.productStock.count -= detail.count
+                                detail.productStock.save()
+                            else:
+                                detail.delete()
                         orderActive.is_pay = True
                         orderActive.priceShipping = orderActive.shipping.price
                         orderActive.priceProducts = orderActive.getPriceProducts()

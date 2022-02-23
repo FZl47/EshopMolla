@@ -50,7 +50,7 @@ def submitCommentContactSupport(request):
         phone = data.get('phone') or None
         subject = data.get('subject') or None
         message = data.get('message') or None
-        if ValidationText(name,2,101) and ValidationEmail(email,2,101) and ValidationText(phone,11,16) and ValidationText(subject,4,101) and ValidationText(message,2,1001):
+        if ValidationText(name,2,101) and ValidationEmail(email,2,101) and ValidationText(phone,10,12) and ValidationText(subject,4,101) and ValidationText(message,2,1001):
             CommentSupport.objects.create(name=name,email=email,phone=phone,subject=subject,message=message)
             return Set_Cookie_Functionality('Your comment submited successfuly','Success')
         return Set_Cookie_Functionality('Please fill in the fields correctly','Error')

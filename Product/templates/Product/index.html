@@ -79,7 +79,7 @@
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
                                     <li class="breadcrumb-item"><a href="{% url 'product:products' %}">Products</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ product.title|truncatechars:20 }}</li>
                                 </ol>
 
                                 {#                                <nav class="product-pager ml-auto" aria-label="Product">#}
