@@ -123,7 +123,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -145,4 +145,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'User.User'
 
+BASE_URL_BLOG_API = 'http://127.0.0.1:8000'
+KEY_API = 'TdoJtFnGdJeQfAOeTF380GjY9gRoTeoDZ1MaN656FNQYfGsYrbDSYRXdsipHzzcwUvYgI3UvgRi6shNptixOHUCAJ4twaVVPR7DuiurGyYmT9qWDBsZEHSb2V4GsWICEFAxQ6uUPJwZvwgLz554won'
 

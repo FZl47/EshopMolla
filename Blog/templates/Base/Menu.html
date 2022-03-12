@@ -1,0 +1,62 @@
+{% load FilterTags %}
+<!-- Mobile Menu -->
+<div class="mobile-menu-overlay"></div><!-- End .mobil-menu-overlay -->
+<div class="mobile-menu-container">
+    <div class="mobile-menu-wrapper">
+        <span class="mobile-menu-close"><i class="icon-close"></i></span>
+
+        <form action="{% url 'blog:posts' %}" method="get" class="mobile-search">
+            <label for="input-search" class="sr-only">Search</label>
+            <input type="search" class="form-control" name="search" id="input-search" placeholder="Search in..."
+                   required="">
+            <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+        </form>
+
+        <nav class="mobile-nav">
+            <ul class="mobile-menu">
+                <li>
+                    {% if request.user.id != None %}
+                        <a href="{% url 'user:dashboard' %}">Dashboard</a>
+                        {% else %}
+                         <a href="{% url 'user:login_register' %}">Login</a>
+                    {% endif %}
+                </li>
+                <li>
+                    <a href="{% url 'product:products' %}" class="sf-with-ul">Product</a>
+                    <ul>
+                        {% for Category in request|getCategories %}
+                            <li><a href="{{ Category.get_absolute_url }}">{{ Category.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li>
+                    <a href="{% url 'user:cart' %}" class="sf-with-ul" target="_self">Cart</a>
+                </li>
+                <li>
+                    <a href="{% url 'blog:posts' %}" class="sf-with-ul" target="_self">Blog</a>
+                </li>
+                <li>
+                    <a href="{% url 'user:wishList' %}" class="sf-with-ul" target="_self">Wish list</a>
+                </li>
+                <li>
+                    <a href="{% url 'public:aboutUs' %}" target="_self">About us</a>
+                </li>
+                <li>
+                    <a href="{% url 'public:contactUs' %}" target="_self">Contact us</a>
+                </li>
+                <li>
+                    <a href="{% url 'public:FAQ' %}" target="_self">FAQ</a>
+                </li>
+                <li>
+                    <a href="{% url 'public:home' %}">Home</a>
+                </li>
+            </ul>
+        </nav><!-- End .mobile-nav -->
+        <div class="social-icons">
+            <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
+            <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
+            <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
+            <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
+        </div><!-- End .social-icons -->
+    </div><!-- End .mobile-menu-wrapper -->
+</div><!-- End .mobile-menu-container -->

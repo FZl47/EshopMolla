@@ -1,5 +1,4 @@
 <nav aria-label="Page navigation">
-    <h1>{{ listRange }}</h1>
     <ul class="pagination justify-content-center">
         {% if pageActive.has_previous %}
             <li class="page-item">
@@ -64,3 +63,27 @@
         {% endif %}
     </ul>
 </nav>
+<script>
+    // Pagination
+    let btnsPage = document.querySelectorAll('[btn-page-pagination]')
+    for (let btn of btnsPage) {
+        btn.addEventListener('click', function () {
+            let pageNum = this.getAttribute('pageNum')
+            insertParam('page', pageNum)
+        })
+    }
+
+    let btnNextPage = document.querySelector('[btn-next-page-pagination]')
+    let btnPreVioustPage = document.querySelector('[btn-previous-page-pagination]')
+
+    if (btnNextPage) {
+        btnNextPage.addEventListener('click', function () {
+            insertParam('page', window._pageNum + 1)
+        })
+    }
+    if (btnPreVioustPage) {
+        btnPreVioustPage.addEventListener('click', function () {
+            insertParam('page', window._pageNum - 1)
+        })
+    }
+</script>

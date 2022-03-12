@@ -13,7 +13,7 @@ import math , json
 
 
 def getProductPagination(req, listProducts):
-    step = 3  # How many products to display
+    step = 4  # How many products to display
 
     def noneVal():
         pagination = Paginator([], step)

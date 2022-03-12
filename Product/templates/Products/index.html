@@ -111,7 +111,7 @@
                         {#                                    class="icon-refresh"></i></a>#}
                         {#                        </div><!-- End .load-more-container -->#}
                     </div><!-- End .products -->
-                    {% include 'Products/pageNavigation.html' %}
+                    {% include 'Base/pageNavigation.html' %}
                     <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->
                     {% include 'Products/filterSection.html' %}
                 </div><!-- End .container-fluid -->
@@ -141,14 +141,6 @@
     <script src="/assets/js/nouislider.min.js"></script>
     <!-- Main JS File -->
     <script src="/assets/js/main.js"></script>
-    <script>
-        window._pageNum = '{{ request.GET.page }}' || 1
-        try {
-            window._pageNum = parseInt(window._pageNum)
-        } catch (e) {
-            window._pageNum = 1
-        }
-    </script>
     <script src="/assets/js/products/filter.js"></script>
 {% endblock %}
 

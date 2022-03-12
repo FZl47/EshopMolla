@@ -99,14 +99,14 @@ register = template.Library()
 #     return 'true'
 #
 
-# @register.filter
-# @register.simple_tag()
-# def ValInList(List,Value):
-#     if Value in List:
-#         return 'true'
-#     return 'false'
-#
-#
+@register.filter
+@register.simple_tag()
+def ValInList(Value,List):
+    if Value in List:
+        return True
+    return False
+
+
 
 @register.filter
 @register.simple_tag()
@@ -221,3 +221,10 @@ def getCategories(request):
 def mul(num_1,num_2):
     return num_1 * num_2
 
+
+@register.filter
+@register.simple_tag()
+def lenList(List):
+    try:
+        return len(List)
+    except:return 0

@@ -138,7 +138,7 @@
 
                                     <div class="product-content">
                                         <p>
-                                            {{ product.description|truncatechars:120 }}
+                                            {{ product.description|safe|truncatechars:120 }}
                                         </p>
                                     </div><!-- End .product-content -->
                                     {% if product.productIsStock %}

@@ -90,7 +90,11 @@
                                         <a class="nav-link" href="{% url 'user:cart' %}">Cart</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'user:wishList' %}">Wish list</a>
+                                        <a class="nav-link" href="{% url 'user:wishList' %}">Wish List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-post-saved-link" href="{% url 'blog:saved' %}"
+                                           role="tab" aria-controls="tab-post-saved" aria-selected="false">Post Saved</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address"

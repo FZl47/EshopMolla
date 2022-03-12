@@ -1,0 +1,288 @@
+{% extends 'Base/BaseTemplate.html' %}
+{% load FilterTags %}
+{% block Title %}
+    Molla - Blog Posts
+{% endblock %}
+
+{% block Link %}
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/plugins/owl-carousel/owl.carousel.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+    <style>
+        img {
+            object-fit: cover;
+        }
+
+        .post-description {
+            min-height: 100px;
+        }
+
+        .btnBookmark {
+            font-size: 200%;
+            cursor: pointer;
+            transition: all .15s;
+            color: #888888;
+        }
+
+        .btnBookmark:hover {
+            color: #83b2cc;
+        }
+
+        [Save] {
+            font-size: 150%;
+            cursor: pointer;
+            margin-top: 12px;
+            margin-bottom: 14px;
+        }
+
+        [Save]:hover {
+            color: #59b0ff;
+        }
+
+        .post-saved {
+            color: #59b0ff;
+            font-weight: bold;
+        }
+
+        .post-saved-animation {
+            animation: animation-post-saved .5s backwards;
+        }
+
+        @keyframes animation-post-saved {
+            25% {
+                transform: rotate(-30deg);
+            }
+            50% {
+                transform: rotate(25deg);
+            }
+        }
+
+    </style>
+{% endblock %}
+
+{% block Content %}
+    <div class="page-wrapper">
+        {% include 'Base/Header.html' %}
+        <main class="main">
+            <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+                <div class="container">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <h1 class="page-title">{{ detailPageTitle }}<span>{{ detailPageDes }}</span></h1>
+                </div><!-- End .container -->
+            </div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'public:home' %}">Home</a></li>
+                        {% if Place == 'tag_view' %}
+                            <li class="breadcrumb-item"><a href="{% url 'blog:posts' %}">Blog</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Tag</li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ Tag.title }}</li>
+                        {% elif Place == 'category_view' %}
+                            <li class="breadcrumb-item"><a href="{% url 'blog:posts' %}">Blog</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Category</li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ Category.title }}</li>
+                        {% elif Place == 'saved_view' %}
+                            <li class="breadcrumb-item"><a href="{% url 'blog:posts' %}">Blog</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Saved</li>
+                        {% else %}
+                            <li class="breadcrumb-item active" aria-current="page">Blog</li>
+                        {% endif %}
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+            <div class="page-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="entry-container max-col-2" data-layout="fitRows">
+                                {% for Post in Posts %}
+                                    <div class="entry-item post col-sm-6">
+                                        <article class="entry entry-grid">
+                                            {% if Post.withVideo %}
+                                                <figure class="entry-media entry-video">
+                                                    <a href="{% url 'blog:post' slug=Post.slug %}">
+                                                        <img style="height: 250px;width: 100%;"
+                                                             src="{{ Post.urlCover }}"
+                                                             alt="{{ Post.title }}">
+                                                    </a>
+                                                </figure><!-- End .entry-media -->
+                                            {% else %}
+                                                <figure class="entry-media">
+                                                    <a href="{% url 'blog:post' slug=Post.slug %}">
+                                                        <img style="height: 250px;width: 100%;"
+                                                             src="{{ Post.urlCover }}"
+                                                             alt="{{ Post.title }}">
+                                                    </a>
+                                                </figure><!-- End .entry-media -->
+                                            {% endif %}
+                                            <div class="entry-body">
+                                                <div class="entry-meta">
+                                                    <a>{{ Post.dateTimePublish }}</a>
+                                                    <span class="meta-separator">|</span>
+                                                    <a>{{ Post.commentsCount }} Comments</a>
+                                                </div><!-- End .entry-meta -->
+
+                                                <h2 class="entry-title">
+                                                    <a href="{% url 'blog:post' slug=Post.slug %}">{{ Post.title|truncatechars:30 }}</a>
+                                                </h2><!-- End .entry-title -->
+
+                                                <div class="entry-cats">
+                                                    in <a
+                                                        href="{% url 'blog:category' slug=Post.category.slug %}">{{ Post.category.title }}</a>,
+                                                </div><!-- End .entry-cats -->
+
+                                                <div class="entry-content">
+                                                    <div class="post-description">{{ Post.description|safe|truncatechars:170 }}</div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <a href="{% url 'blog:post' slug=Post.slug %}"
+                                                           class="read-more">Continue
+                                                            Reading</a>
+                                                        {% if request.user.id != None %}
+                                                            {% if Post.id|ValInList:PostSavedID %}
+                                                                <i class="fal fa-bookmark btnBookmark post-saved"
+                                                                   Save state="saved"
+                                                                   onclick="actionSavePost(this,{{ Post.id }})"></i>
+                                                            {% else %}
+                                                                <i class="fal fa-bookmark btnBookmark" Save
+                                                                   onclick="actionSavePost(this,{{ Post.id }})"></i>
+                                                            {% endif %}
+                                                            {% else %}
+                                                            <a href="{% url 'user:login_register' %}"><i class="fal fa-bookmark btnBookmark" Save></i></a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div><!-- End .entry-content -->
+                                            </div><!-- End .entry-body -->
+                                        </article><!-- End .entry -->
+                                    </div><!-- End .entry-item -->
+                                {% empty %}
+                                    <div class="entry-item text-center w-100" style="margin: 100px auto;">
+                                        <img src="/assets/images/default/blog/ImageBoxEmpty.jpg"
+                                             class="col-10 col-md-5 mx-auto"
+                                             alt="Box Empty">
+                                        <h5>no post</h5>
+                                    </div>
+                                {% endfor %}
+                            </div><!-- End .entry-container -->
+                            {% if Posts|ListIsNone == False %}
+                                {% include 'Base/pageNavigation.html' %}
+                            {% endif %}
+                        </div><!-- End .col-lg-9 -->
+
+                        <aside class="col-lg-3">
+                            <div class="sidebar">
+                                <div class="widget widget-search">
+                                    <h3 class="widget-title">Search</h3><!-- End .widget-title -->
+
+                                    <form action="{% url 'blog:posts' %}">
+                                        <label for="ws" class="sr-only">Search in blog</label>
+                                        <input type="search" class="form-control" name="search" id="ws"
+                                               placeholder="Search in blog" value="{{ searchValue|NoneVal:'' }}">
+                                        <button type="submit" class="btn"><i class="icon-search"></i><span
+                                                class="sr-only">Search</span></button>
+                                    </form>
+                                    {% if isSearched == True %}
+                                        <div class="d-flex justify-content-between align-items-center mt-1">
+                                            <div>
+                                                <small class="text-light">Searched :</small>
+                                                <br>
+                                                <h6 style="color: #777777">{{ searchValue|truncatechars:20 }}</h6>
+                                            </div>
+                                            <p><a href="{% url 'blog:posts' %}">Clear</a></p>
+                                        </div>
+                                    {% endif %}
+                                </div><!-- End .widget -->
+
+                                <div class="widget widget-cats">
+                                    <h3 class="widget-title">Categories</h3><!-- End .widget-title -->
+                                    <ul>
+                                        {% for Category in Categories %}
+                                            <li>
+                                                <a href="{% url 'blog:category' slug=Category.slug %}">{{ Category.title }}<span>{{ Category.countPosts }}</span></a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div><!-- End .widget -->
+                                <div class="widget">
+                                    <h3 class="widget-title">Popular Posts</h3><!-- End .widget-title -->
+                                    <ul class="posts-list">
+                                        {% for Post in PopularPosts %}
+                                            <li>
+                                                <figure>
+                                                    <a href="{% url 'blog:post' slug=Post.slug %}">
+                                                        <img style="height: 65px" src="{{ Post.urlCover }}"
+                                                             alt="{{ Post.title }}">
+                                                    </a>
+                                                </figure>
+                                                <div>
+                                                    <span>{{ Post.dateTimePublish }}</span>
+                                                    <h4>
+                                                        <a href="{% url 'blog:post' slug=Post.slug %}">{{ Post.title|truncatechars:25 }}</a>
+                                                    </h4>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul><!-- End .posts-list -->
+                                </div><!-- End .widget -->
+
+                                <div class="widget widget-banner-sidebar">
+                                    <div class="banner-sidebar-title">ad box 280 x 280</div><!-- End .ad-title -->
+
+                                    <div class="banner-sidebar banner-overlay">
+                                        <a href="{% url 'product:products' %}">
+                                            <img src="/assets/images/blog/sidebar/banner.jpg" alt="banner">
+                                        </a>
+                                    </div><!-- End .banner-ad -->
+                                </div><!-- End .widget -->
+
+                                <div class="widget">
+                                    <h3 class="widget-title">Browse Tags</h3><!-- End .widget-title -->
+                                    <div class="tagcloud">
+                                        {% for Tag in Tags %}
+                                            <a href="{% url 'blog:tag' slug=Tag.slug %}">{{ Tag.title }}</a>
+                                        {% endfor %}
+                                    </div><!-- End .tagcloud -->
+                                </div><!-- End .widget -->
+
+                                <div class="widget widget-text">
+                                    <h3 class="widget-title">About Blog</h3><!-- End .widget-title -->
+
+                                    <div class="widget-text-content">
+                                        <p>Vestibulum volutpat, lacus a ultrices sagittis, mi neque euismod dui,
+                                            pulvinar nunc sapien ornare nisl.</p>
+                                    </div><!-- End .widget-text-content -->
+                                </div><!-- End .widget -->
+                            </div><!-- End .sidebar -->
+                        </aside><!-- End .col-lg-3 -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        {% include 'Base/Footer/index.html' %}
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    {% include 'Base/Menu.html' %}
+
+{% endblock %}
+
+{% block Js %}
+    <!-- Plugins JS File -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <script src="/assets/js/imagesloaded.pkgd.min.js"></script>
+    <script src="/assets/js/isotope.pkgd.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/Blog/index.js"></script>
+{% endblock %}

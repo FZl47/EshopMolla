@@ -64,69 +64,6 @@ applyFilters.addEventListener('click', function () {
 
 })
 
-function insertParam(key, value) {
-    key = encodeURIComponent(key);
-    value = encodeURIComponent(value);
-    var kvp = document.location.search.substr(1).split('&');
-    let i = 0;
-    for (; i < kvp.length; i++) {
-        if (kvp[i].startsWith(key + '=')) {
-            let pair = kvp[i].split('=');
-            pair[1] = value;
-            kvp[i] = pair.join('=');
-            break;
-        }
-    }
-    if (i >= kvp.length) {
-        kvp[kvp.length] = [key, value].join('=');
-    }
-    let params = kvp.join('&');
-    document.location.search = params;
-}
-
-function removeParam(key, sourceURL) {
-    var rtn = sourceURL.split("?")[0],
-        param,
-        params_arr = [],
-        queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-    if (queryString !== "") {
-        params_arr = queryString.split("&");
-        for (var i = params_arr.length - 1; i >= 0; i -= 1) {
-            param = params_arr[i].split("=")[0];
-            if (param === key) {
-                params_arr.splice(i, 1);
-            }
-        }
-        if (params_arr.length) rtn = rtn + "?" + params_arr.join("&");
-    }
-    return rtn;
-}
-
-// Pagination
-
-let btnsPage = document.querySelectorAll('[btn-page-pagination]')
-for (let btn of btnsPage) {
-    btn.addEventListener('click', function () {
-        console.log(this)
-        let pageNum = this.getAttribute('pageNum')
-        insertParam('page', pageNum)
-    })
-}
-
-let btnNextPage = document.querySelector('[btn-next-page-pagination]')
-let btnPreVioustPage = document.querySelector('[btn-previous-page-pagination]')
-
-if (btnNextPage) {
-    btnNextPage.addEventListener('click', function () {
-        insertParam('page', window._pageNum + 1)
-    })
-}
-if (btnPreVioustPage) {
-    btnPreVioustPage.addEventListener('click', function () {
-        insertParam('page', window._pageNum - 1)
-    })
-}
-
 
 //sort
 let sortby = document.getElementById('sortby')

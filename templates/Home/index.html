@@ -12,6 +12,40 @@
     <!-- Main CSS File -->
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/demos/demo-12.css">
+    <link rel="stylesheet" href="/assets/css/demos/demo-5.css">
+    <style>
+        .btn-primary {
+            background: #fff !important;
+            color: #c96 !important;
+            transition: all .4s;
+        }
+
+        .btn-primary:hover {
+            transform: scaleX(1.1);
+        }
+
+        .btn-primary:active {
+            transform: scaleX(1.1);
+        }
+
+        .btn-primary:focus {
+            transform: scaleX(1.1);
+        }
+
+        .Categories .banner-content{
+            text-align: center;
+            margin: auto!important;
+        }
+
+        .Categories .banner-link{
+            text-align: center!important;
+            width: 30%!important;
+            left: 35%;
+            margin: -5px auto!important;
+            position: absolute!important;
+        }
+
+    </style>
 {% endblock %}
 
 
@@ -21,71 +55,73 @@
 
         <main class="main">
             <div class="intro-slider-container mb-3 mb-lg-5">
-                <div class="intro-slider owl-carousel owl-simple owl-nav-inside owl-light" data-toggle="owl"
-                     data-owl-options='{"nav":false, "dots": false, "loop": false}'>
+                <div class="intro-slider-container mb-0">
                     <div class="intro-slide"
                          style="background-image: url(assets/images/demos/demo-12/slider/slide-1.jpg);">
                         <div class="container intro-content text-center">
-                            <h3 class="intro-subtitle text-white">SEASONAL PICKS</h3><!-- End .h3 intro-subtitle -->
-                            <h1 class="intro-title text-white">Get All The Good Stuff</h1><!-- End .intro-title -->
-
-                            <a href="{% url 'product:products' %}" class="btn btn-white">
-                                <span>DISCOVER MORE</span>
-                                <i class="icon-long-arrow-right"></i>
-                            </a>
-
+                            <h3 class="intro-subtitle text-white mb-2">Don’t Miss</h3><!-- End .h3 intro-subtitle -->
+                            <h1 class="intro-title text-white">Mystery Deals</h1><!-- End .intro-title -->
+                            <div class="intro-text text-white">Online Only</div><!-- End .intro-text -->
+                            <a href="{% url 'product:products' %}" class="btn btn-primary">Discover NOW</a>
                         </div><!-- End .intro-content -->
                     </div><!-- End .intro-slide -->
-                </div><!-- End .intro-slider owl-carousel owl-simple -->
+                </div><!-- End .intro-slider-container -->
 
-                <span class="slider-loader text-white"></span><!-- End .slider-loader -->
             </div><!-- End .intro-slider-container -->
 
             <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="banner banner-display banner-link-anim banner-title-hidden">
-                            <a href="{% url 'product:products' %}?orderby=popularity">
-                                <img src="assets/images/demos/demo-12/banners/banner-1.jpg" alt="Banner">
-                            </a>
-                            <div class="banner-content banner-content-center">
-                                <h3 class="banner-title text-white"><a>This Week's Most Wanted</a></h3>
-                                <!-- End .banner-title -->
-                                <a href="{% url 'product:products' %}?orderby=popularity"
-                                   class="btn btn-outline-white banner-link">Shop Now</a>
-                            </div><!-- End .banner-content -->
-                        </div><!-- End .banner -->
-                    </div><!-- End .col-md-6 -->
+                <div class="banner-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="banner banner-border">
+                                <a href="{% url 'product:products' %}?orderby=popularity">
+                                    <img src="assets/images/demos/demo-5/banners/banner-1.jpg" alt="Banner">
+                                </a>
 
-                    <div class="col-md-6">
-                        <div class="banner banner-display banner-link-anim banner-title-hidden">
-                            <a href="{% url 'product:category' title='Bag' %}">
-                                <img src="assets/images/demos/demo-12/banners/banner-2.jpg" alt="Banner">
-                            </a>
+                                <div class="banner-content">
+                                    <h4 class="banner-subtitle"><a href="{% url 'product:products' %}?orderby=popularity">Trending now</a></h4>
+                                    <!-- End .banner-subtitle -->
+                                    <h3 class="banner-title"><a href="{% url 'product:products' %}?orderby=popularity"><span>This Week's<br>Most Wanted</span></a>
+                                    </h3><!-- End .banner-title -->
+                                    <a href="{% url 'product:products' %}?orderby=popularity" class="btn btn-outline-primary-2 banner-link">Discover Now<i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .banner-content -->
+                            </div><!-- End .banner -->
+                        </div><!-- End .col-md-6-->
 
-                            <div class="banner-content banner-content-center">
-                                <h3 class="banner-title text-white"><a>Bags by Mood</a></h3>
-                                <!-- End .banner-title -->
-                                <a href="{% url 'product:category' title='Bag' %}"
-                                   class="btn btn-outline-white banner-link">Discover Now</a>
-                            </div><!-- End .banner-content -->
-                        </div><!-- End .banner -->
-                        <div class="banner banner-display banner-link-anim banner-title-hidden">
-                            <a href="{% url 'product:category' title='Shoes' %}">
-                                <img src="assets/images/demos/demo-12/banners/banner-3.jpg" alt="Banner">
-                            </a>
+                        <div class="col-md-6">
+                            <div class="banner banner-border-hover">
+                                <a href="{% url 'product:category' title='Shirt' %}">
+                                    <img src="assets/images/demos/demo-5/banners/banner-2.jpg" alt="Banner">
+                                </a>
 
-                            <div class="banner-content banner-content-center">
-                                <h3 class="banner-title text-white"><a>The Trend Story</a></h3>
-                                <!-- End .banner-title -->
-                                <a href="{% url 'product:category' title='Shoes' %}" class="btn btn-outline-white banner-link">Shop
-                                    Now</a>
-                            </div><!-- End .banner-content -->
-                        </div><!-- End .banner -->
-                    </div><!-- End .col-md-6 -->
-                </div><!-- End .row -->
+                                <div class="banner-content">
+                                    <h4 class="banner-subtitle"><a href="{% url 'product:category' title='Shirt' %}">New Shirt.</a></h4>
+                                    <!-- End .banner-subtitle -->
+                                    <h3 class="banner-title"><a href="{% url 'product:category' title='Shirt' %}"><span>Sports & Popular</span></a>
+                                    </h3><!-- End .banner-title -->
+                                    <a href="{% url 'product:category' title='Shirt' %}" class="btn btn-outline-primary-2 banner-link">Shop Now<i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .banner-content -->
+                            </div><!-- End .banner -->
 
-                <div class="mb-3"></div><!-- End .mb-3 -->
+                            <div class="banner banner-border-hover">
+                                <a href="{% url 'product:category' title='Clothes' %}">
+                                    <img src="assets/images/demos/demo-5/banners/banner-3.jpg" alt="Banner">
+                                </a>
+
+                                <div class="banner-content">
+                                    <h4 class="banner-subtitle"><a href="{% url 'product:category' title='Clothes' %}">This week we love...</a></h4>
+                                    <!-- End .banner-subtitle -->
+                                    <h3 class="banner-title"><a href="{% url 'product:category' title='Clothes' %}"><span>Womens <br>Holiday Clothes</span></a>
+                                    </h3><!-- End .banner-title -->
+                                    <a href="{% url 'product:category' title='Clothes' %}" class="btn btn-outline-primary-2 banner-link">Discover Now<i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .banner-content -->
+                            </div><!-- End .banner -->
+                        </div><!-- End .col-md-6 -->
+                    </div><!-- End .row -->
+                </div><!-- End .banner-group -->
             </div><!-- End .container -->
 
             <div class="bg-lighter pt-5 pb-5 mb-5">
@@ -127,7 +163,7 @@
                 </div><!-- End .container -->
             </div><!-- End .bg-lighter pt-5 pb-5 -->
 
-            <div class="container">
+            <div class="container Categories">
                 <div class="heading text-center mb-4">
                     <h2 class="title">Popular Categories</h2><!-- End .title -->
                     <p class="title-desc">Vestibulum auctor dapibus neque</p><!-- End .title-desc -->
@@ -143,13 +179,13 @@
                             <div class="banner-content banner-content-center">
                                 <h3 class="banner-title text-white"><a>Accessories</a></h3>
                                 <!-- End .banner-title -->
-{#                                <h4 class="banner-subtitle text-white"><a href="#">16 Items</a></h4>#}
+                                {#                                <h4 class="banner-subtitle text-white"><a href="#">16 Items</a></h4>#}
                                 <!-- End .banner-subtitle -->
-                                <a href="{% url 'product:category' title='Accessories' %}" class="btn btn-outline-white banner-link">Shop Now</a>
+                                <a href="{% url 'product:category' title='Accessories' %}"
+                                   class="btn btn-outline-white banner-link">Shop Now</a>
                             </div><!-- End .banner-content -->
                         </div><!-- End .banner -->
                     </div><!-- End .col-sm-6 -->
-
                     <div class="col-sm-6 col-lg-4 order-lg-last">
                         <div class="banner banner-display banner-link-anim">
                             <a href="{% url 'product:category' title='Jewellery' %}">
@@ -159,13 +195,13 @@
                             <div class="banner-content banner-content-center">
                                 <h3 class="banner-title text-white"><a>Jewellery</a></h3>
                                 <!-- End .banner-title -->
-{#                                <h4 class="banner-subtitle text-white"><a href="#">8 Items</a></h4>#}
+                                {#                                <h4 class="banner-subtitle text-white"><a href="#">8 Items</a></h4>#}
                                 <!-- End .banner-subtitle -->
-                                <a href="{% url 'product:category' title='Jewellery' %}" class="btn btn-outline-white banner-link">Shop Now</a>
+                                <a href="{% url 'product:category' title='Jewellery' %}"
+                                   class="btn btn-outline-white banner-link">Shop Now</a>
                             </div><!-- End .banner-content -->
                         </div><!-- End .banner -->
                     </div><!-- End .col-sm-6 -->
-
                     <div class="col-lg-4">
                         <div class="row">
                             <div class="col-sm-6 col-lg-12">
@@ -177,13 +213,13 @@
                                     <div class="banner-content banner-content-center">
                                         <h3 class="banner-title text-white"><a>Clothing</a></h3>
                                         <!-- End .banner-title -->
-{#                                        <h4 class="banner-subtitle text-white"><a href="#">24 Items</a></h4>#}
+                                        {#                                        <h4 class="banner-subtitle text-white"><a href="#">24 Items</a></h4>#}
                                         <!-- End .banner-subtitle -->
-                                        <a href="{% url 'product:category' title='Clothing' %}" class="btn btn-outline-white banner-link">Discover Now</a>
+                                        <a href="{% url 'product:category' title='Clothing' %}"
+                                           class="btn btn-outline-white banner-link">Discover Now</a>
                                     </div><!-- End .banner-content -->
                                 </div><!-- End .banner -->
                             </div><!-- End .col-sm-6 -->
-
                             <div class="col-sm-6 col-lg-12">
                                 <div class="banner banner-display banner-link-anim">
                                     <a href="{% url 'product:category' title='Shoes' %}">
@@ -193,14 +229,58 @@
                                     <div class="banner-content banner-content-center">
                                         <h3 class="banner-title text-white"><a>Shoes</a></h3>
                                         <!-- End .banner-title -->
-{#                                        <h4 class="banner-subtitle text-white"><a href="#">6 Items</a></h4>#}
+                                        {#                                        <h4 class="banner-subtitle text-white"><a href="#">6 Items</a></h4>#}
                                         <!-- End .banner-subtitle -->
-                                        <a href="{% url 'product:category' title='Shoes' %}" class="btn btn-outline-white banner-link">Shop Now</a>
+                                        <a href="{% url 'product:category' title='Shoes' %}"
+                                           class="btn btn-outline-white banner-link">Shop Now</a>
                                     </div><!-- End .banner-content -->
                                 </div><!-- End .banner -->
                             </div><!-- End .col-sm-6 -->
                         </div><!-- End .row -->
                     </div><!-- End .col-lg-6 -->
+                </div><!-- End .row -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="banner banner-display banner-link-anim banner-title-hidden">
+                            <a href="{% url 'product:products' %}?orderby=popularity">
+                                <img src="assets/images/demos/demo-12/banners/banner-1.jpg" alt="Banner">
+                            </a>
+                            <div class="banner-content banner-content-center">
+                                <h3 class="banner-title text-white"><a>This Week's Most Wanted</a></h3>
+                                <!-- End .banner-title -->
+                                <a href="{% url 'product:products' %}?orderby=popularity"
+                                   class="btn btn-outline-white banner-link">Shop Now</a>
+                            </div><!-- End .banner-content -->
+                        </div><!-- End .banner -->
+                    </div><!-- End .col-md-6 -->
+
+                    <div class="col-md-6">
+                        <div class="banner banner-display banner-link-anim banner-title-hidden">
+                            <a href="{% url 'product:category' title='Bag' %}">
+                                <img src="assets/images/demos/demo-12/banners/banner-2.jpg" alt="Banner">
+                            </a>
+
+                            <div class="banner-content banner-content-center">
+                                <h3 class="banner-title text-white"><a>Bags by Mood</a></h3>
+                                <!-- End .banner-title -->
+                                <a href="{% url 'product:category' title='Bag' %}"
+                                   class="btn btn-outline-white banner-link">Discover Now</a>
+                            </div><!-- End .banner-content -->
+                        </div><!-- End .banner -->
+                        <div class="banner banner-display banner-link-anim banner-title-hidden">
+                            <a href="{% url 'product:category' title='Shoes' %}">
+                                <img src="assets/images/demos/demo-12/banners/banner-3.jpg" alt="Banner">
+                            </a>
+
+                            <div class="banner-content banner-content-center">
+                                <h3 class="banner-title text-white"><a>The Trend Story</a></h3>
+                                <!-- End .banner-title -->
+                                <a href="{% url 'product:category' title='Shoes' %}"
+                                   class="btn btn-outline-white banner-link">Shop
+                                    Now</a>
+                            </div><!-- End .banner-content -->
+                        </div><!-- End .banner -->
+                    </div><!-- End .col-md-6 -->
                 </div><!-- End .row -->
 
                 <div class="icon-boxes-container bg-transparent">

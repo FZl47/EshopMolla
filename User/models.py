@@ -4,6 +4,11 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 
 
+def RandomString():
+    from Config.Tools import RandomString as R
+    return R(150)
+
+
 class CustomUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifiers
@@ -42,14 +47,12 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=70, null=True, default='Unknown')
     last_name = models.CharField(max_length=70, null=True, default='Unknown')
+    keyBlog = models.CharField(max_length=150,default=RandomString)
     phone_number = models.CharField(max_length=15, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-
-    def __str__(self):
-        return self.email
 
     def getName(self):
         return f'{self.first_name} {self.last_name}'
