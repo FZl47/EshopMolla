@@ -271,6 +271,6 @@ def getOrder(request,id):
             context['Order'] = order
             context['User'] = user
             return render(request,'order.html',context)
-    return PermissionDenied
+    raise PermissionDenied
 
 
